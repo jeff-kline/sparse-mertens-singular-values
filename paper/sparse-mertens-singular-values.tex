@@ -1,0 +1,760 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage[hmargin=1in]{geometry}
+\usepackage{hyperref}
+
+\renewenvironment{abstract}{%
+  \small
+  \begin{center}\bfseries\abstractname\end{center}
+  \list{}{\leftmargin=3em \rightmargin=\leftmargin
+          \listparindent=1.5em \itemindent=0pt
+          \parsep=0pt \topsep=0pt}%
+  \item\relax\ignorespaces
+}{\endlist\medskip}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Rc}{\mathcal{R}}
+\newcommand{\Ac}{\mathcal{A}}
+\newcommand{\Pp}{P}
+\newcommand{\Pm}{P^{-}}
+\DeclareMathOperator{\rank}{rank}
+
+\title{The smallest singular value of a sparse Mertens matrix}
+\author{Jeffery Kline}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Redheffer's $(0,1)$ matrix $R_n$ satisfies $\det R_n = M(n) := \sum_{k\le
+n}\mu(k)$, and the Riemann hypothesis is equivalent to $M(n) =
+O(n^{1/2+\varepsilon})$. A substantially sparser $(0,1)$ matrix $\Rc_n$ with the
+same determinant --- about $2.61n$ nonzero entries against Redheffer's $\sim n\log
+n$ --- was introduced in \cite{kline581}, and in \cite{kline584} its two dominant
+\emph{eigenvalues} were shown to be $1\pm\sqrt{\pi(n)}+O(\log\log n)$. We determine
+its \emph{singular values} at both ends. The largest is
+$\sigma_{\max}(\Rc_n)=\sqrt{n}\,(1+O(1/n))$, forced by a single dense row, with
+non-normality gap $\sigma_{\max}/|\lambda_{\max}|\asymp\sqrt{\log n}$. The smallest
+satisfies
+\[
+  |M(n)|\cdot n^{-3/2+o(1)}\ \le\ \sigma_{\min}(\Rc_n)\ \le\
+  |M(n)|\cdot n^{-4/3+o(1)},
+\]
+whence $\mathrm{RH}\iff\sigma_{\min}(\Rc_n)\ll_\varepsilon n^{-1+\varepsilon}$,
+an equivalence that is two-sided and unconditional. The lower bound is attained,
+giving $\sigma_{\min}(\Rc_n)=|M(n)|n^{-3/2+o(1)}$, as soon as
+$|M(n)|/\|w\|\to0$, which RH itself supplies. The mechanism is that the entries of the vector
+$\Ac^{-\mathsf T}(\mathbf 1-e_1)$, where $\Ac$ is the unit lower-triangular factor
+of $\Rc_n$, are \emph{exactly} the sums $M(x,y)=\sum_{d\le x,\,\Pm(d)>y}\mu(d)$ of
+the M\"obius function over integers free of small prime factors; the analytic
+input is then Alladi's asymptotic $M(x,x^{1/\alpha})\sim x\rho'(\alpha)/\log y$
+with $\rho$ Dickman's function \cite{alladiJNT}, which we cite rather than claim.
+It gives $\|w\|=n^{1+o(1)}$ unconditionally, and that norm is what produces the
+exponent $-3/2$ above.
+Along the way we show $\|\Ac^{-1}\|=n^{1/2+o(1)}$ via a Neumann series that
+terminates after $\sim\log n/\log\log n$ terms, hence
+$\sigma_{\min}(\Ac)=n^{-1/2+o(1)}$; this answers, negatively for this family, a
+question of Cheon and Kim \cite{cheonkim}. We also record why the problem is
+severely pre-asymptotic: several natural conjectures suggested by computation up
+to $n=10^7$ are false, and we identify the finite-range mechanism responsible.
+\end{abstract}
+
+\section{Introduction}\label{sec:intro}
+
+Write $\mu$ for the M\"obius function and
+\[
+  M(n) := \sum_{k\le n}\mu(k)
+\]
+for the Mertens function. It is classical that the prime number theorem is
+equivalent to $M(n)=o(n)$, and that the Riemann hypothesis is equivalent to
+\begin{equation}\label{eq:rh}
+  M(n) = O(n^{1/2+\varepsilon})\qquad\text{for every }\varepsilon>0 .
+\end{equation}
+Redheffer \cite{redheffer} introduced the $n\times n$ $(0,1)$ matrix $R_n$ with
+$R(i,j)=1$ when $j=1$ or $i\mid j$, and proved $\det R_n = M(n)$. This places
+\eqref{eq:rh} inside linear algebra, and a long line of work has studied the
+spectrum of $R_n$ \cite{bfp,barrettjarvis,vaughanI,vaughanII,cardon,camargo}.
+
+Much less is known about \emph{singular} values; Cl\'ement and Steinerberger
+\cite{clementsteinerberger} say so explicitly, and treat only the largest. The
+idea of routing the Riemann hypothesis through a smallest singular value appears
+to originate with Bordell\`es and Cloitre \cite{bordellescloitre}, who study an
+integer matrix $\Gamma_n$ with $\det\Gamma_n = n!\sum_{k\le n}\mu(k)/k$ and
+deduce from an $LU$ decomposition that a lower bound
+$\sigma_{\min}(U_n)\gg_\varepsilon n^{-1/2-\varepsilon}$ would imply RH; Cheon
+and Kim \cite{cheonkim} give a criterion of the same shape for the triangular
+factor of a Mertens equimodular matrix, and ask which matrices satisfy it. In
+both cases the criterion is a \emph{sufficient condition} awaiting verification,
+and in neither is the relevant singular value determined. The present paper
+determines the singular values of one family at both ends, and answers the
+Cheon--Kim question for it.
+
+\subsection{The matrix}
+
+The following much sparser $(0,1)$ matrix with the same determinant was
+introduced in \cite[\S1]{kline584}. Let $\Pp(i)$ denote the largest prime factor
+of $i>1$, and set
+\begin{equation}\label{eq:defA}
+  \Ac(i,j) :=
+  \begin{cases}
+    1 & \text{if } i=j,\\
+    1 & \text{if } i \text{ is squarefree and } i/j=\Pp(i),\\
+    0 & \text{otherwise,}
+  \end{cases}
+  \qquad
+  \Rc_n := \Ac_n + e_1(\mathbf 1-e_1)^{\mathsf T},
+\end{equation}
+so that $\Rc_n$ agrees with $\Ac_n$ except that its first row is all ones. Then
+$\Ac_n$ is unit lower triangular, $\det\Rc_n=M(n)$, and $\Rc_n$ has about $2.61n$
+nonzero entries: one per diagonal, one per row of the all-ones row, and one for
+each squarefree $i\le n$, the last contributing $6n/\pi^2+O(\sqrt n)$. By contrast
+$R_n$ has $\sum_{i\le n}d(i)=n\log n+(2\gamma-1)n+O(n^{\theta})$ nonzeros. The two
+dominant eigenvalues of $\Rc_n$ are
+\begin{equation}\label{eq:kline1}
+  r_\pm \;=\; 1\pm\sqrt{\pi(n)}+\tfrac12\,\frac{\pi_2'(n)}{\pi(n)}
+  +O\!\left(\frac{\log\log^2 n}{\sqrt{n/\log n}}\right)
+\end{equation}
+by \cite[Thm.~1]{kline584}, where $\pi_k'(n)$ counts squarefree integers below
+$n$ with exactly $k$ prime factors.
+
+The reason $\sqrt{\pi(n)}$ appears in \eqref{eq:kline1}, rather than the $\sqrt n$
+of the Redheffer matrix \cite[Thm.~1]{barrettjarvis}, is worth stating because the
+same mechanism governs $\sigma_{\max}$ below. Writing $\Ac=I+S$, the matrix $S$ is
+the adjacency matrix of a \emph{forest}: each squarefree $i$ has the unique parent
+$i/\Pp(i)$. The children of the root $1$ are exactly the primes, so the hub degree
+is $\pi(n)$; in $R_n$ the corresponding hub degree is $n$.
+
+\subsection{Results}
+
+Throughout, $\Pm(i)$ is the smallest prime factor of $i>1$ with
+$\Pm(1)=\infty$, and
+\begin{equation}\label{eq:defMxy}
+  M(x,y) \;:=\; \sum_{\substack{d\le x\\ \Pm(d)>y}}\mu(d)
+\end{equation}
+is the M\"obius function summed over $y$-\emph{rough} integers. We write
+$\alpha=\log x/\log y$ and let $\rho$ denote Dickman's function, defined by
+$\rho(\alpha)=1$ on $0<\alpha\le1$ and $\rho(\alpha)=1-\int_1^\alpha
+\rho(t-1)\,dt/t$ for $\alpha>1$.
+
+Set $\mu_n := (\mu(1),\dots,\mu(n))^{\mathsf T}$ and
+\begin{equation}\label{eq:defw}
+  w \;:=\; \Ac_n^{-\mathsf T}(\mathbf 1 - e_1).
+\end{equation}
+The first of these is the first column of $\Ac_n^{-1}$; the vector $w$ collects the
+\emph{other} columns, and it is the object that was missing from the analysis in
+\cite{kline588}.
+
+Our first result identifies $w$ completely.
+
+\begin{theorem}[closed form]\label{thm:closed}
+For $1\le j\le n$,
+\[
+  w_j =
+  \begin{cases}
+    1 & \text{if $j$ is not squarefree},\\
+    M(n/j,\Pp(j)) & \text{if $j$ is squarefree},
+  \end{cases}
+\]
+with the convention $\Pp(1):=1$, so that $M(n/1,\Pp(1))=M(n)$, and with the value
+at $j=1$ diminished by $1$. Consequently
+\[
+  \|w\|^2 \;=\; \#\{j\le n:\ j\text{ not squarefree}\}
+  \;+\;\bigl(M(n)-1\bigr)^2
+  \;+\!\!\sum_{\substack{2\le j\le n\\ j\ \mathrm{squarefree}}}\!\! M(n/j,\Pp(j))^2 .
+\]
+\end{theorem}
+
+So an inverse-matrix vector for $\Rc_n$ is, entry by entry, a rough-M\"obius sum
+evaluated along the hyperbola $x=n/j$, $y=\Pp(j)$. Alladi's asymptotic for $M(x,y)$
+then controls $\|w\|$:
+
+\begin{theorem}[norm]\label{thm:norm}
+$\|w\| = n^{1+o(1)}$, unconditionally.
+\end{theorem}
+
+Combining with an exact Sherman--Morrison factorisation gives the main result.
+
+\begin{theorem}[smallest singular value]\label{thm:main}
+Unconditionally,
+\[
+  |M(n)|\cdot n^{-3/2+o(1)}\ \le\ \sigma_{\min}(\Rc_n)\ \le\
+  |M(n)|\cdot n^{-4/3+o(1)},
+\]
+the upper bound needing nothing beyond the prime number theorem (Remark
+\ref{rem:hierarchy}). If moreover $|M(n)|/\|w\|\to0$, the two collapse to
+$\sigma_{\min}(\Rc_n)=|M(n)|\cdot n^{-3/2+o(1)}$. In either case
+\[
+  \text{RH}\quad\Longleftrightarrow\quad
+  \sigma_{\min}(\Rc_n)\ \ll_\varepsilon\ n^{-1+\varepsilon}.
+\]
+\end{theorem}
+
+The equivalence is two-sided and unconditional: ``$\Longleftarrow$'' is the
+unconditional lower bound rearranged, and ``$\Longrightarrow$'' may assume RH,
+which supplies $|M(n)|/\|w\|\to0$ and hence the exact asymptotic. The hypothesis
+$|M(n)|/\|w\|\to0$ is not known unconditionally: the best available bounds,
+$\|w\|\gg_\varepsilon n^{1-\varepsilon}$ from Theorem \ref{thm:norm} and
+$|M(n)|\ll n\exp(-c(\log n)^{3/5}(\log\log n)^{-1/5})$, do not cross.
+
+We stress what is and is not
+content here. That $\det\Rc_n=M(n)$ is \cite{kline581,kline584}, so
+``$\mathrm{RH}\iff|\det\Rc_n|\ll n^{1/2+\varepsilon}$'' is immediate and carries
+nothing new. The content of Theorem \ref{thm:main} is the conversion factor
+$\|\mu_n\|\,\|w\| = n^{3/2+o(1)}$, that is, Theorem \ref{thm:norm}: without it the
+equivalence is unavailable in either direction at the stated exponent.
+
+At the other extreme, and for the unmodified factor:
+
+\begin{theorem}[the other extreme]\label{thm:max}
+$\sigma_{\max}(\Rc_n)=\sqrt n\,(1+O(1/n))$, and
+$\sigma_{\max}(\Rc_n)/|\lambda_{\max}(\Rc_n)|\asymp\sqrt{\log n}$.
+Moreover $\|\Ac_n^{-1}\|=n^{1/2+o(1)}$ and hence
+$\sigma_{\min}(\Ac_n)=n^{-1/2+o(1)}$.
+\end{theorem}
+
+The exponent in the second assertion is sharp, but the $o(1)$ is an artefact of
+the method: the terminating Neumann series bounds $\|\Ac_n^{-1}\|$ by
+$\sum_r\sqrt{\pi_r'(n)}$, and that sum exceeds $\sqrt n$ by a factor
+$1.55,1.62,1.67,1.72,1.76$ at $n=10^4,\dots,10^8$ --- monotone increasing, so the
+argument cannot deliver $\asymp\sqrt n$ however carefully it is run. Numerically
+$\|\Ac_n^{-1}\|/\sqrt n$ is flat at $0.8499$ out to $n=10^7$, and we expect
+$\|\Ac_n^{-1}\|\asymp\sqrt n$; we do not prove it.
+
+The last assertion answers a question of \cite{cheonkim} for this family; see
+Remark \ref{rem:cheonkim}.
+
+\subsection{Relation to earlier work}
+
+In \cite{kline588} it is shown that for unit lower-triangular $L$, with $B$
+obtained by deleting the first row and $l$ the first column of $L^{-1}$, one has
+$\det BB^{\mathsf T}=\|l\|_2^2$; for the matrices considered here $l=\mu_n$ and
+$\sqrt{\det BB^{\mathsf T}}=\sqrt{6n}/\pi+O(1)$. The same paper observes,
+informally, that
+\begin{quote}
+  \emph{the Riemann hypothesis is an assertion that the constant $\mathbf 1^{\mathsf
+  T}$ is, for all $n$, almost in the span of the rows of $B$.}
+\end{quote}
+That distance is $|\det \Rc_n|/\sqrt{\det BB^{\mathsf T}} = |M(n)|/\|\mu_n\| \asymp
+|M(n)|n^{-1/2}$. Theorem \ref{thm:main} completes the picture quantitatively:
+\begin{equation}\label{eq:compare}
+  \underbrace{\operatorname{dist}(\mathbf 1^{\mathsf T},\ \mathrm{rowspan}\,B)}_{\textstyle
+  =\ |M(n)|/\|\mu_n\|\ \asymp\ |M(n)|n^{-1/2}}
+  \qquad\text{versus}\qquad
+  \underbrace{\sigma_{\min}(\Rc_n)}_{\textstyle =\ |M(n)|/(\|\mu_n\|\|w\|)\ =\
+  |M(n)|n^{-3/2+o(1)}} .
+\end{equation}
+The first is the distance from one particular vector to a hyperplane; the second
+is the minimum over all unit directions. They differ by $\|w\|=n^{1+o(1)}$: the
+matrix is a full factor of $n^{1+o(1)}$ closer to singular than that single
+direction reveals, and quantifying the discrepancy is exactly what requires
+Alladi's estimates.
+
+\subsection{What is cited and what is proved}
+
+The analytic engine is not ours. Theorem \ref{thm:alladi} below is
+\cite[Thm.~1]{alladiJNT}, together with the contrast with $\Psi(x,y)$ that he
+draws on p.~87 and that we record in Remark \ref{rem:buchstab};
+\cite{alladiTAMS} is its companion. What is
+established here is the linear algebra: Theorem \ref{thm:closed}, which identifies
+$w$ with Alladi's sums, and the consequences \ref{thm:norm}--\ref{thm:max}. All
+numerical claims are reproduced by the scripts in \texttt{code/}; the two
+independent derivations of Theorem \ref{thm:alladi} obtained while this work was
+in progress, and the prior-art audit, are recorded in \texttt{audit/reports/}.
+
+\section{Notation and cited results}\label{sec:prelim}
+
+For an arithmetic function $f$ we write $A(f)_n$ for the $n\times n$ matrix with
+$(i,j)$ entry $f(i/j)$ when $j\mid i$ and $0$ otherwise. All matrices below are
+real. We use $\|\cdot\|$ for the spectral norm and $\sigma_1\ge\cdots\ge\sigma_n$
+for singular values, so $\sigma_{\min}=\sigma_n$.
+
+Recall $\Ac=I+S$ from \eqref{eq:defA}, where
+\begin{equation}\label{eq:defS}
+  S(i,j)=1 \iff i \text{ squarefree},\ i\ge2,\ j=i/\Pp(i).
+\end{equation}
+Each row of $S$ has at most one nonzero entry, so $S$ is the adjacency matrix of a
+forest in which every squarefree $i\ge2$ has the single parent $i/\Pp(i)$.
+
+We use the following two results without proof.
+
+\begin{theorem}[Alladi {\cite[Thm.~1]{alladiJNT}}]\label{thm:alladi}
+If $y\ge x$ then $M(x,y)=1$. If $y=x^{1/\alpha}$ then
+\[
+  M(x,y) \;=\; \frac{x\,\rho'(\alpha)}{\log y} \;+\;\frac{y}{\log y}
+  \;+\;O\!\left(\frac{x\,\alpha^2}{\log^2 y}\right),
+\]
+uniformly for $2\le y<x$.
+\end{theorem}
+
+Differentiating the defining relation for $\rho$ gives $\alpha\rho'(\alpha) =
+-\rho(\alpha-1)$, so Theorem \ref{thm:alladi} may be written in the equivalent form
+\begin{equation}\label{eq:alladi2}
+  M(x,x^{1/\alpha}) = -\frac{x}{\log x}\,\rho(\alpha-1)\bigl(1+O_\alpha(1/\log y)\bigr),
+\end{equation}
+which is the shape used below. Note $\rho>0$ everywhere, so $M(x,y)$ is negative
+and bounded away from $0$ relative to $x/\log x$ for each fixed $\alpha$.
+
+\begin{remark}\label{rem:buchstab}
+Alladi states the contrast with the smooth-number count
+$\Psi(x,y)\sim x\rho(\alpha)$: the same sum weighted by $\mu$ produces Dickman's
+\emph{derivative} $\rho'$ in place of $\rho$ itself \cite[p.~87]{alladiJNT}. It is
+worth adding, though it is not Alladi's remark, that the unweighted rough count
+$\Phi(x,y)=\#\{d\le x:\Pm(d)>y\}\sim x\,\omega(\alpha)/\log y$ involves Buchstab's
+$\omega$; so the $\mu$-weighting replaces $\omega$ by $\rho'$.
+\end{remark}
+
+\begin{theorem}[{\cite[Thms.~1 and 3]{kline588}}]\label{thm:588}
+Let $L$ be unit lower triangular, let $B$ be $L$ with its first row deleted, and
+let $l$ be the first column of $L^{-1}$. Then $\det BB^{\mathsf T}=\|l\|_2^2$. For
+$L=\Ac_n$ one has $l=\mu_n$ and
+$\|\mu_n\|^2=\sum_{i\le n}|\mu(i)|=6n/\pi^2+O(\sqrt n)$.
+\end{theorem}
+
+\section{The inverse, and the vector \texorpdfstring{$w$}{w}}\label{sec:closed}
+
+\begin{proof}[Proof of Theorem \ref{thm:closed}]
+Since $S$ is nilpotent, $\Ac^{-1}=\sum_{r\ge0}(-S)^r$, and $(S^r)_{kj}$ counts
+paths of length $r$ from $k$ to $j$ in the parent forest. Each vertex has at most
+one parent, so there is at most one such path, and it exists precisely when $k$ is
+squarefree and $j$ is obtained from $k$ by repeatedly deleting largest prime
+factors. Writing $k$ squarefree with primes $p_1<\cdots<p_r$, the vertices
+reachable from $k$ are exactly the initial products $p_1\cdots p_m$,
+$0\le m\le r$. Hence $(\Ac^{-1})_{kj}\ne0$ if and only if $k$ is squarefree,
+$j\mid k$, and every prime factor of $k/j$ exceeds $\Pp(j)$ --- which forces $j$
+squarefree as well --- and in that case $(\Ac^{-1})_{kj}=(-1)^{\omega(k/j)}=\mu(k/j)$.
+
+Now $w_j=\sum_{k\ge2}(\Ac^{-1})_{kj}$. If $j$ is not squarefree the only surviving
+term is the diagonal one, giving $w_j=1$. If $j$ is squarefree, substitute
+$d=k/j$: the conditions become $d\le n/j$, $d$ squarefree, and $\Pm(d)>\Pp(j)$,
+whence $w_j=\sum_{d\le n/j,\,\Pm(d)>\Pp(j)}\mu(d)=M(n/j,\Pp(j))$; for $j=1$ the
+constraint $k\ge2$ removes the term $d=1$.
+\end{proof}
+
+Two consequences are worth isolating, because they make part of the sum in
+Theorem \ref{thm:closed} completely explicit. Write $x=n/j$ and $y=\Pp(j)$.
+
+\begin{corollary}\label{cor:trichotomy}
+For squarefree $j$: if $y\ge x$ then $w_j=1$; if $\sqrt x\le y<x$ then
+$w_j = 1-(\pi(x)-\pi(y))$.
+\end{corollary}
+
+\begin{proof}
+If $y\ge x$ the only $d\le x$ with $\Pm(d)>y$ is $d=1$. If $\sqrt x\le y<x$ then
+such a $d$ is either $1$ or a prime in $(y,x]$, since a composite $y$-rough number
+is at least $y^2\ge x$.
+\end{proof}
+
+The following two identities for $M(x,y)$ are standard and are used below; both
+are immediate from unique factorisation.
+
+\begin{lemma}\label{lem:identities}
+$M(x,y)=M(x)+\sum_{p\le y}M(x/p,p)$, equivalently $M(x,y)=1-\sum_{y<p\le
+x}M(x/p,p)$; and $M(x,y)=\sum_{a\le x,\ a\ y\text{-smooth}}M(x/a)$, the sum being
+over \emph{all} $y$-smooth $a$, not merely squarefree ones.
+\end{lemma}
+
+\section{The norm of \texorpdfstring{$w$}{w}}\label{sec:norm}
+
+\begin{proof}[Proof of Theorem \ref{thm:norm}]
+\emph{Upper bound.} Trivially $|M(x,y)|\le x$, so by Theorem \ref{thm:closed}
+$\|w\|^2\le\sum_{j\le n}(n/j)^2\le\zeta(2)n^2$, giving
+$\|w\|\le (\pi/\sqrt6)\,n$.
+
+\emph{Lower bound.} Fix $\alpha>1$ and let $j=p$ run over the primes in
+$(n^{1/(\alpha+1)},2n^{1/(\alpha+1)}]$. For such $p$ we have $x=n/p$, $y=p$ and
+$\log x/\log y=\alpha+O(1/\log n)$, so Theorem \ref{thm:alladi} applies at fixed
+$\alpha$: its main term is $x\rho'(\alpha)/\log y\asymp_\alpha x/\log y$ and
+dominates the error $O(x\alpha^2/\log^2 y)$ by a factor $\log y$. Since
+$\rho>0$, $|w_p| = |M(n/p,p)| \gg_\alpha n^{\alpha/(\alpha+1)}/\log n$. By the
+prime number theorem there are $\gg n^{1/(\alpha+1)}/\log n$ such primes, and by
+Theorem \ref{thm:closed} the quantity $\|w\|^2$ is a sum of squares, so
+\emph{any} subfamily bounds it below:
+\[
+  \|w\|^2 \;\gg_\alpha\; \frac{n^{1/(\alpha+1)}}{\log n}\cdot
+  \frac{n^{2\alpha/(\alpha+1)}}{\log^2 n}
+  \;=\;\frac{n^{(2\alpha+1)/(\alpha+1)}}{\log^3 n},
+  \qquad\text{i.e.}\qquad
+  \|w\| \;\gg_\alpha\; \frac{n^{1-\frac1{2\alpha+2}}}{\log^{3/2} n}.
+\]
+Letting $\alpha\to\infty$ gives $\|w\|\gg_\varepsilon n^{1-\varepsilon}$ for every
+$\varepsilon>0$.
+\end{proof}
+
+\begin{remark}[the refined shape, open]\label{rem:shape}
+Both a saddle-point analysis and the numerics of \S\ref{sec:numerics} indicate
+$\|w\| = n\exp\bigl(-(1+o(1))\sqrt{\log n\log\log n}\,\bigr)$, the maximising
+subfamily sitting at $\alpha\asymp\sqrt{\log n/\log\log n}$. This is \emph{not}
+established. Theorem \ref{thm:alladi} does not reach that range: as Alladi notes
+\cite[p.~87]{alladiJNT}, since $\rho'(\alpha)=-\exp\{-\alpha\log\alpha-\alpha\log\log\alpha+O(\alpha)\}$
+for $\alpha>3$, ``the main terms of Theorem 1 are smaller than the error term when
+$\alpha$ is large''. His Theorem 2 covers large $\alpha$ but only as an upper bound
+with decay $\exp\{-(\alpha/2)\log\alpha\}$, half the true exponent. Determining
+the constant therefore requires an improvement of the $1982$ estimates, and would
+sharpen the $o(1)$ in Theorems \ref{thm:norm} and \ref{thm:main}.
+\end{remark}
+
+\section{The smallest singular value}\label{sec:sigmamin}
+
+\begin{proposition}\label{prop:sm}
+$\Rc_n^{-1}=\Ac_n^{-1}-\mu_n w^{\mathsf T}/M(n)$ whenever $M(n)\ne0$. If moreover
+$|M(n)|/\|w\|\to0$, then
+\begin{equation}\label{eq:factorisation}
+  \sigma_{\min}(\Rc_n)\cdot\|\mu_n\|\cdot\|w\| \;=\; |M(n)|\,(1+o(1)).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Sherman--Morrison applied to $\Rc_n=\Ac_n+e_1(\mathbf 1-e_1)^{\mathsf T}$ gives the
+stated inverse, using $\Ac_n^{-1}e_1=\mu_n$ and $(\mathbf 1-e_1)^{\mathsf
+T}\Ac_n^{-1}=w^{\mathsf T}$, together with $1+(\mathbf
+1-e_1)^{\mathsf T}\Ac_n^{-1}e_1=M(n)$, which is $\det\Rc_n=M(n)$. The rank-one
+term has norm $\|\mu_n\|\|w\|/|M(n)|$, while $\|\Ac_n^{-1}\|=n^{1/2+o(1)}$ by
+Theorem \ref{thm:max}. Their ratio is
+$(\|\mu_n\|/\|\Ac_n^{-1}\|)\cdot\|w\|/|M(n)|$, and the first factor is bounded
+below by a positive constant since $\|\Ac_n^{-1}\|\ge\|\mu_n\|$; so the rank-one
+term dominates precisely when $\|w\|/|M(n)|\to\infty$, which is the hypothesis.
+Then $\sigma_{\min}(\Rc_n)=1/\|\Rc_n^{-1}\|$ gives \eqref{eq:factorisation}.
+\end{proof}
+
+The hypothesis is harmless in the application --- RH supplies it at once --- but it
+is not known unconditionally, since the best lower bound for $\|w\|$ and the best
+upper bound for $|M(n)|$ do not cross. This is the one place where the chain is
+conditional, and it is why Theorem \ref{thm:main} is stated as a bracket.
+
+\begin{proof}[Proof of Theorem \ref{thm:main}]
+By Theorem \ref{thm:588}, $\|\mu_n\| = \sqrt{6n/\pi^2}\,(1+o(1)) = n^{1/2+o(1)}$,
+and by Theorem \ref{thm:norm}, $\|w\|=n^{1+o(1)}$.
+
+\emph{Lower bound.} The elementary bounds $\|w\|\le(\pi/\sqrt6)n$ and
+$\|\mu_n\|\le\sqrt n$, with $\sigma_{\min}(\Rc_n)\ge|M(n)|/(\|\mu_n\|\|w\|)$ from
+the rank-one representation, give $\sigma_{\min}(\Rc_n)\ge|M(n)|n^{-3/2+o(1)}$
+unconditionally. \emph{Upper bound.} Remark \ref{rem:hierarchy} gives
+$\sigma_{\min}(\Rc_n)\ll|M(n)|n^{-4/3+o(1)}$ from the prime number theorem alone.
+If $|M(n)|/\|w\|\to0$, Proposition \ref{prop:sm} applies and substituting the two
+norms into \eqref{eq:factorisation} collapses the bracket to
+$\sigma_{\min}(\Rc_n)=|M(n)|n^{-3/2+o(1)}$.
+
+For the equivalence: if RH holds then $M(n)\ll n^{1/2+\varepsilon}$, which forces
+$|M(n)|/\|w\|\to0$ by Theorem \ref{thm:norm}, so the exact asymptotic is available
+and $\sigma_{\min}\ll n^{-1+2\varepsilon}$. Conversely,
+$\sigma_{\min}\ll_\varepsilon n^{-1+\varepsilon}$ combined with the unconditional
+lower bound forces $M(n)\ll n^{1/2+\varepsilon}$, which is \eqref{eq:rh}. Note
+that the reverse direction uses only the elementary upper bounds on $\|w\|$ and
+$\|\mu_n\|$; the forward direction is what Theorem \ref{thm:norm} buys.
+\end{proof}
+
+\begin{remark}
+$\Rc_n$ is singular exactly when $M(n)=0$, which occurs infinitely often, so
+$\sigma_{\min}(\Rc_n)=0$ for infinitely many $n$ and no nontrivial unconditional
+lower bound is available. Only upper bounds are meaningful, which is why test
+vectors and projections are the natural tool; see Remark \ref{rem:hierarchy}.
+\end{remark}
+
+\begin{remark}[a hierarchy of cheaper bounds]\label{rem:hierarchy}
+For any orthogonal projection $Q$ one has $\|\Rc_n^{-1}\|\ge\|\Rc_n^{-1}Q\|$, and
+different choices of $Q$ recover successively sharper bounds at successively
+higher cost. Taking the single test vector $\mu_n/\|\mu_n\|$ gives
+$\sigma_{\min}\le|M(n)|/\|\mu_n\|$, which is \eqref{eq:compare} and is weaker than
+the truth by exactly $\|w\|$. Taking $Q$ of rank one at an index $j=p$ with
+$p\approx n^{1/3}$ --- where Corollary \ref{cor:trichotomy} applies and $w_p$ is an
+\emph{exact} difference of prime counts --- already gives $\sigma_{\min}\ll
+|M(n)|n^{-7/6+o(1)}$ using only the prime number theorem. Summing Corollary
+\ref{cor:trichotomy} over the whole range $n^{1/3}\le p\le n^{1/2}$ gives
+$\sigma_{\min}\ll|M(n)|n^{-4/3+o(1)}$, still with no input beyond PNT. Only the
+last step from $n^{-4/3}$ to $n^{-3/2}$ requires Theorem \ref{thm:alladi}. In
+particular, combining the third bound with the unconditional $M(n)\ll
+n\exp(-c\sqrt{\log n})$ yields the clean estimate $\sigma_{\min}(\Rc_n)\ll
+n^{-1/3+o(1)}$ by elementary means.
+\end{remark}
+
+\section{The largest singular value, and the unmodified factor}\label{sec:max}
+
+\begin{proof}[Proof of Theorem \ref{thm:max}]
+\emph{Largest singular value.} The first row of $\Rc_n$ has norm $\sqrt n$, so
+$\sigma_{\max}\ge\sqrt n$. For the upper bound write $\Rc_n=e_1\mathbf 1^{\mathsf
+T}+ (I-e_1e_1^{\mathsf T}) + S$. Each row of $S$ has at most one nonzero entry and
+the column sums of $S$ are the numbers of children, the largest being $\pi(n)$ at
+the root; the Schur test therefore gives $\|S\|\le\sqrt{1\cdot\pi(n)}=\sqrt{\pi(n)}$,
+and the star at the root shows this is an equality. The triangle inequality gives
+only $\sigma_{\max}\le\sqrt n+1+\sqrt{\pi(n)}=\sqrt n\,(1+O(1/\sqrt{\log n}))$,
+which is weaker than claimed; for the stated error term argue on the Gram matrix
+instead. Write
+\[
+  \Rc_n\Rc_n^{\mathsf T}=\begin{pmatrix} n & b^{\mathsf T}\\ b & C\end{pmatrix},
+\]
+the first row of $\Rc_n$ being $\mathbf 1^{\mathsf T}$. For $k\ge2$, $b_k$ is the
+number of nonzero entries in row $k$, which is $2$ if $k$ is squarefree and $1$
+otherwise; hence
+\[
+  \|b\|^2=4\bigl(Q(n)-1\bigr)+\bigl(n-Q(n)\bigr)=3Q(n)+n-4\ \le\ 4n,
+\]
+where $Q(n)=\#\{k\le n:\ k\text{ squarefree}\}$. Also
+$C=BB^{\mathsf T}$ with $B$ the last $n-1$ rows of $\Rc_n$, so
+$\|C\|\le(1+\sqrt{\pi(n)})^2=o(n)$. If $\lambda=\lambda_{\max}(\Rc_n\Rc_n^{\mathsf
+T})\ge n$ then $\lambda>\|C\|$ for large $n$, and the Schur complement identity
+for the top-left entry gives
+\[
+  \lambda = n + b^{\mathsf T}(\lambda I-C)^{-1}b
+  \ \le\ n+\frac{\|b\|^2}{\lambda-\|C\|}\ =\ n+O(1).
+\]
+Hence $\sigma_{\max}=\sqrt{n+O(1)}=\sqrt n\,(1+O(1/n))$. (Numerically
+$\lambda_{\max}(\Rc_n\Rc_n^{\mathsf T})-n\to 1+18/\pi^2=2.8238$, which is
+$\lim\|b\|^2/n$, so the $O(1)$ is attained and not merely an upper bound.)
+
+\emph{Non-normality.} By \eqref{eq:kline1}, $|\lambda_{\max}(\Rc_n)| =
+(1+o(1))\sqrt{\pi(n)}$, and $\sqrt{n/\pi(n)}\asymp\sqrt{\log n}$.
+
+\emph{The unmodified factor.} Let $\omega_{\max}(n)$ be the largest number of prime
+factors of a squarefree integer at most $n$, so $\omega_{\max}(n)\sim\log
+n/\log\log n$. Each application of $S$ deletes one prime factor, hence
+$S^{\,\omega_{\max}(n)+1}=0$ and the Neumann series
+$\Ac_n^{-1}=\sum_{r\le\omega_{\max}(n)}(-S)^r$ \emph{terminates}. Row sums of $S^r$
+are at most $1$ and its column sums are $\pi_r'(n)$, the number of squarefree $k\le
+n$ with $\omega(k)=r$; so $\|S^r\|\le\sqrt{\pi_r'(n)}$ and
+$\|\Ac_n^{-1}\|\le\sum_r\sqrt{\pi_r'(n)} = n^{1/2+o(1)}$. Conversely
+$\|\Ac_n^{-1}\|\ge\|\Ac_n^{-1}e_1\|=\|\mu_n\|\asymp\sqrt n$ by Theorem
+\ref{thm:588}. Finally $\sigma_{\min}(\Ac_n)=1/\|\Ac_n^{-1}\|$.
+\end{proof}
+
+\begin{remark}[Bordell\`es--Cloitre]\label{rem:bc}
+The strategy of bounding a smallest singular value from below in order to reach
+PNT or RH is due to \cite{bordellescloitre}. There $U_n$ is the upper triangular
+factor of $\Gamma_n$, with $U_n^{-1}=(\theta_{ij})$ given explicitly in terms of
+iterated M\"obius functions, and Corollary 2.7 of that paper states
+$\bigl|\sum_{k=i}^n \mu_i(k)/k\bigr|\le 1/(n\sigma_n)$, so that
+$\sigma_n\gg_\varepsilon n^{-1+\varepsilon}$ suffices for PNT and
+$\sigma_n\gg_\varepsilon n^{-1/2-\varepsilon}$ suffices for RH. The authors
+observe that the general bounds available for smallest singular values of
+triangular matrices --- for instance $\sigma_n\ge\min_i|a_{ii}|/2^{\,n-1}$ under a
+diagonal dominance hypothesis --- are exponentially weak and ``still very far from
+the PNT''.
+
+Theorem \ref{thm:max} is a case where the arithmetic structure does determine the
+order exactly: for the triangular factor $\Ac_n$ considered here,
+$\sigma_{\min}(\Ac_n)\asymp n^{-1/2}$, obtained not from a general matrix
+inequality but from the fact that the Neumann series for $\Ac_n^{-1}$ terminates
+after $\sim\log n/\log\log n$ terms. We note in passing that this is precisely
+the exponent appearing in the RH threshold of \cite{bordellescloitre}, though for
+a different matrix, so the two do not combine.
+\end{remark}
+
+\begin{remark}[a question of Cheon and Kim]\label{rem:cheonkim}
+For a Mertens equimodular matrix $L_n+uv^{\mathsf T}$, since $\det L_n=1$ and
+$uv^{\mathsf T}$ has singular values $\sqrt{n-1},0,\dots,0$, the determinantal
+inequality of Li and Mathias \cite{limathias} gives $|M(n)|\le
+1+\sqrt{n-1}/\sigma_{\min}(L_n)$; Cheon and Kim \cite[Thm.~4.2]{cheonkim} deduce
+that $1+\sqrt{n-1}/\sigma_{\min}(L_n)=O(n^{1/2+\varepsilon})$ implies the Riemann
+hypothesis, and ask which matrices satisfy this. Theorem \ref{thm:max} answers the
+question negatively for the present family: with
+$\sigma_{\min}(\Ac_n)=n^{-1/2+o(1)}$ the quantity is $n^{1+o(1)}$, which is not
+$O(n^{1/2+\varepsilon})$, so the resulting bound $|M(n)|\le n^{1+o(1)}$ is trivial. Note their criterion concerns the
+\emph{unmodified} factor and is one-directional, whereas Theorem \ref{thm:main}
+concerns the modified matrix and is an equivalence.
+\end{remark}
+
+\section{Numerical remarks}\label{sec:numerics}
+
+All values below are produced by the scripts in \texttt{code/}, using only NumPy
+(\texttt{checkB.py} additionally uses \texttt{mpmath}): the $O(n\log n)$
+quantities by \texttt{wnorm.py} and \texttt{massprofile.py}, and every
+singular-value, eigenvalue and nilpotency figure by \texttt{spectra.py}, which
+builds the matrices explicitly and calls a dense SVD. Two independent
+implementations were used throughout: a dense construction with a direct linear
+solve, and an $O(n\log n)$ evaluator built from Theorem \ref{thm:closed} and
+Corollary \ref{cor:trichotomy}. They agree to residual exactly $0$ at
+$n=500,1000,2000$, which is the check on Theorem \ref{thm:closed}.
+
+\begin{table}[h]\centering
+\begin{tabular}{rrrr}
+\toprule
+$n$ & $\|w\|$ & $\|w\|/n$ & local exponent \\
+\midrule
+$10^5$ & $2289.3$   & $0.022893$ & --- \\
+$3\cdot10^5$ & $5211.8$   & $0.017373$ & $0.7488$ \\
+$10^6$ & $12850.5$  & $0.012851$ & $0.7496$ \\
+$3\cdot10^6$ & $29519.5$  & $0.009840$ & $0.7570$ \\
+$10^7$ & $73972.3$  & $0.007397$ & $0.7630$ \\
+$3\cdot10^7$ & $172026.3$ & $0.005734$ & $0.7683$ \\
+\bottomrule
+\end{tabular}
+\caption{The norm $\|w\|$. The local exponent climbs steadily; Theorem
+\ref{thm:norm} asserts it tends to $1$.}\label{tab:w}
+\end{table}
+
+Verification of \eqref{eq:factorisation}, computed from the dense matrix: the
+ratio $\sigma_{\min}(\Rc_n)\|\mu_n\|\|w\|/|M(n)|$ equals $0.9896$, $1.0038$,
+$1.0047$ at $n=500,1000,2000$. Over the grid $n=200,225,\dots,3200$ (excluding the
+$n$ with $M(n)=0$, where $\Rc_n$ is singular) it oscillates within
+$[0.987,1.027]$, the extremes occurring at $n=300$ and $n=225$; the deviation is
+bounded and shows no trend, consistent with the $1+o(1)$ of Proposition
+\ref{prop:sm}, but it is not monotone and does not visibly contract over this
+range. For $\|\mu_n\|$, the ratio $\|\mu_n\|/\sqrt n$ equals $0.77971$ at $n=10^5$
+and $0.77970$ at $n=3\cdot10^5,10^6,3\cdot10^6,10^7$, against
+$\sqrt{6/\pi^2}=0.779697$: the squarefree count is already at its asymptotic
+density to five figures across this range.
+
+For Theorem \ref{thm:max}: $\sigma_{\max}(\Rc_n)/\sqrt n$ equals
+$1.00387,1.00191,1.00094,1.00047,1.00023$ at $n=400,\dots,6400$, the excess
+halving at each doubling; $\sigma_{\max}/|\lambda_{\max}|$ equals
+$1.906,2.087,2.262,2.440,2.592$ against $\sqrt{\log n}=2.448,\dots,2.960$; the
+nilpotency index of $S$ is $5,5,5,6$ at $n=500,\dots,3000$;
+$\|\Ac_n^{-1}\|/\sqrt n$ equals $0.853,0.851,0.849,0.850$; and
+$\sigma_{\min}(\Ac_n)\sqrt n$ equals $1.1717,1.1753,1.1773,1.1760$. The quantity
+of Remark \ref{rem:cheonkim} equals $427,851,1699,2552$ against the required
+$O(n^{1/2+\varepsilon})=22,32,45,55$.
+
+For scale, the same non-normality ratio computed for Redheffer's own $R_n$ (built
+directly, and checked against $\det R_n=M(n)$) equals
+$1.2243,1.2475,1.2686,1.2875$ at $n=400,800,1600,3200$, against
+$1.9063,2.0871,2.2623,2.4395$ for $\Rc_n$. Both are far below $\sqrt n$, and at
+these sizes the sparser matrix is the more non-normal of the two; we draw no
+asymptotic conclusion from four points.
+
+\subsection{The problem is severely pre-asymptotic}\label{sec:preasymptotic}
+
+We record this because computation up to $n=10^7$ is actively misleading here, and
+several natural conjectures it suggests are false.
+
+Table \ref{tab:w} makes $\|w\|$ look like a clean power of $n$: over
+$10^5\le n\le10^6$ the ratio $\|w\|/n^{3/4}$ is stable to four significant figures
+($0.40711,0.40658,0.40637$). It is not a power. The ratio breaks at $3\cdot10^6$
+($0.40951$) and the local exponent continues to climb past $3/4$, consistent with
+Theorem \ref{thm:norm}. Likewise, the normalisation $\|w\|(\log
+n)^{1.13}/n^{5/6}$ appears stable to under $1\%$ per decade while in fact
+increasing monotonically at every step.
+
+The mechanism is a \emph{corner}. Writing $\beta=\log j/\log n$, the mass of
+$\|w\|^2$ concentrates at $\beta=1/3$, equivalently $\alpha=2$ --- exactly the
+threshold of Corollary \ref{cor:trichotomy}, below which the $y$-rough numbers
+under $x$ are still only $1$ and the primes. Dickman's $\rho$ has a corner at $1$,
+so the relevant integrand has a jump in its derivative there, and the maximiser is
+\emph{pinned} at $\beta=1/3$ until $\log n$ exceeds an explicit threshold. The
+measured mass-mean $\beta$ is $0.3368,0.3364,0.3361,0.3351$ at
+$n=10^5,\dots,10^7$: already drifting, and accelerating. The crossover at which the
+$\alpha=3$ subfamily overtakes the $\alpha=2$ subfamily lies near $n=10^{12}$, far
+beyond any feasible computation.
+
+The practical consequence is that the exponent in Theorem \ref{thm:norm} cannot be
+inferred numerically, and any conjecture about $\|w\|$ or $\sigma_{\min}(\Rc_n)$
+based on data below $10^8$ should be treated with suspicion.
+
+\section{Open problems}\label{sec:open}
+
+\begin{enumerate}
+\item \textbf{The refined shape.} Establish $\|w\| = n\exp(-(1+o(1))\sqrt{\log
+n\log\log n})$, and thereby replace the $o(1)$ in Theorem \ref{thm:main} by an
+explicit function. By Remark \ref{rem:shape} this requires extending Theorem
+\ref{thm:alladi} to $\alpha\asymp\sqrt{\log x/\log\log x}$ --- the $\mu$-weighted
+analogue of Hildebrand's range for $\Psi(x,y)\sim x\rho(\alpha)$ \cite{hildtenen}
+--- or improving the decay in \cite[Thm.~2]{alladiJNT} from
+$\exp\{-(\alpha/2)\log\alpha\}$ to $\exp\{-\alpha\log\alpha\}$.
+\item \textbf{Other families.} By Remark \ref{rem:cheonkim} the present family
+fails the Cheon--Kim criterion because its triangular factor is poorly
+conditioned, $\sigma_{\min}(\Ac_n)\asymp n^{-1/2}$. Is there a family in which
+$\sigma_{\min}(L_n)\gg n^{-\varepsilon}$? Theorem \ref{thm:max} shows the
+obstruction here is that $\|\Ac_n^{-1}\|$ is already attained by its first column,
+namely $\|\mu_n\|$; any candidate family must avoid that. The same question for
+the matrix $U_n$ of \cite{bordellescloitre} appears to be open, and Theorem
+\ref{thm:max} suggests that a termination argument for the relevant Neumann
+series, rather than a general triangular-matrix inequality, is the tool to try.
+\item \textbf{Deeper singular values.} \eqref{eq:kline1} and Theorem
+\ref{thm:max} describe the extremes. The forest structure suggests that successive
+shells --- squarefree integers with $2$, then $3$ prime factors --- govern the next
+singular values, with $\pi_2'(n)$ already visible in \eqref{eq:kline1}.
+\end{enumerate}
+
+\begin{thebibliography}{99}
+
+\bibitem{alladiJNT}
+K.~Alladi, \emph{Asymptotic estimates of sums involving the Moebius function},
+J.\ Number Theory 14 (1982) 86--98.
+
+\bibitem{alladiTAMS}
+K.~Alladi, \emph{Asymptotic estimates of sums involving the Moebius function.
+II}, Trans.\ Amer.\ Math.\ Soc.\ 272 (1982) 87--105.
+
+\bibitem{bordellescloitre}
+O.~Bordell\`es, B.~Cloitre, \emph{A matrix inequality for M\"obius functions},
+J.\ Inequal.\ Pure Appl.\ Math.\ 10 (2009), art.\ 62, 17 pp.
+
+\bibitem{bfp}
+W.~W.~Barrett, R.~W.~Forcade, A.~D.~Pollington, \emph{On the spectral radius of a
+$(0,1)$ matrix related to Mertens' function}, Linear Algebra Appl.\ 107 (1988)
+151--159.
+
+\bibitem{barrettjarvis}
+W.~W.~Barrett, T.~J.~Jarvis, \emph{Spectral properties of a matrix of Redheffer},
+Linear Algebra Appl.\ 162 (1992) 673--683.
+
+\bibitem{camargo}
+A.~Pierro de Camargo, \emph{Dirichlet matrices: determinants, permanents and the
+Factorisatio Numerorum problem}, Linear Algebra Appl.\ 628 (2021) 115--129.
+
+\bibitem{cardon}
+D.~A.~Cardon, \emph{Matrices related to Dirichlet series}, J.\ Number Theory 130
+(2010) 27--39.
+
+\bibitem{cheonkim}
+G.-S.~Cheon, H.~Kim, \emph{Mertens equimodular matrices of Redheffer type},
+Linear Algebra Appl.\ 572 (2019) 252--272.
+
+\bibitem{clementsteinerberger}
+F.~Cl\'ement, S.~Steinerberger, \emph{On the largest singular vector of the
+Redheffer matrix}, Linear Algebra Appl.\ 725 (2025) 96--114.
+
+\bibitem{debruijn}
+N.~G.~de Bruijn, \emph{On the number of positive integers $\le x$ and free of
+prime factors $>y$}, Nederl.\ Akad.\ Wetensch.\ Proc.\ Ser.\ A 54 (1951) 50--60.
+
+\bibitem{dickman}
+K.~Dickman, \emph{On the frequency of numbers containing prime factors of a
+certain relative magnitude}, Ark.\ Mat.\ Astr.\ Fys.\ 22 (1930) 1--14.
+
+\bibitem{hildtenen}
+A.~Hildebrand, G.~Tenenbaum, \emph{Integers without large prime factors},
+J.\ Th\'eor.\ Nombres Bordeaux 5 (1993) 411--484.
+
+\bibitem{kline581}
+J.~Kline, \emph{A sparser matrix representation of the Mertens function}, Linear
+Algebra Appl.\ 581 (2019) 354--366.
+
+\bibitem{kline584}
+J.~Kline, \emph{On the eigenstructure of sparse matrices related to the prime
+number theorem}, Linear Algebra Appl.\ 584 (2020) 409--430.
+
+\bibitem{kline588}
+J.~Kline, \emph{Bordered Hermitian matrices and sums of the M\"obius function},
+Linear Algebra Appl.\ 588 (2020) 224--237.
+
+\bibitem{limathias}
+C.-K.~Li, R.~Mathias, \emph{The determinant of the sum of two matrices},
+Bull.\ Austral.\ Math.\ Soc.\ 52 (1995) 425--429.
+
+\bibitem{redheffer}
+R.~Redheffer, \emph{Eine explizit l\"osbare Optimierungsaufgabe}, Numerische
+Methoden bei Optimierungsaufgaben, Band 3, Birkh\"auser, 1977, pp.\ 213--216.
+
+\bibitem{vaughanI}
+R.~C.~Vaughan, \emph{On the eigenvalues of Redheffer's matrix I}, in: Number
+Theory with an Emphasis on the Markoff Spectrum, Dekker, 1993, pp.\ 283--296.
+
+\bibitem{vaughanII}
+R.~C.~Vaughan, \emph{On the eigenvalues of Redheffer's matrix II}, J.\ Austral.\
+Math.\ Soc.\ 60 (1996) 260--273.
+
+\end{thebibliography}
+
+\end{document}

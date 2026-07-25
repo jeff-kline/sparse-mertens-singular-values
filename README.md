@@ -52,19 +52,20 @@ hyperbola.
 | `proofs/smallest-singular-value.md` | The proof note: statements, proofs, status labels, and what is not established. |
 | `code/` | Numerics; NumPy only, except `checkB.py` which also needs `mpmath`. `wnorm.py` is an `O(n log n)` evaluator reaching `n = 3*10^7`; `massprofile.py` adds the mass profile. |
 | `audit/reports/` | Two independent attack reports (elementary and analytic, run under mandated-different methods) and the prior-art audit. |
-| `paper/` | The paper. Not yet written. |
+| `paper/` | The paper (11 pp.), source and PDF. |
 
 ## Status
 
 **Private, work in progress.** Two conditions before this goes public:
 
-1. **Bordelles & Cloitre** (reference [5] of Cheon-Kim) derive a sufficient
-   condition for RH from the smallest singular value of the upper triangular
-   factor in an LU decomposition — the same object as the `sigma_min(A)` result
-   above. Unread. Also unread: Alladi, Trans. Amer. Math. Soc. **272** (1982)
-   87-105, the sequel to the paper supplying the engine.
+1. ~~Bordelles & Cloitre~~ — **read and cited** (JIPAM **10** (2009), art. 62).
+   Their matrix is different (`det = n! * sum mu(k)/k`) and their Corollary 2.7 is
+   a sufficient condition, not an asymptotic; they explicitly note that general
+   bounds for the smallest singular value of a triangular matrix are exponentially
+   weak. Discussed at Remark 12 of the paper. Still unread: Alladi, Trans. Amer.
+   Math. Soc. **272** (1982) 87-105, the sequel to the paper supplying the engine.
 2. No adversarial pass has been run on the material added after the two attack
-   reports.
+   reports, nor on the paper itself.
 
 The sharp constant is open. Alladi's Theorem 1 does not reach the relevant
 saddle, and his Theorem 2 gives only half the true exponent; he flags this
