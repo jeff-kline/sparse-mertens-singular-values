@@ -53,12 +53,11 @@ satisfies
   |M(n)|\cdot n^{-3/2+o(1)}\ \le\ \sigma_{\min}(\Rc_n)\ \le\
   |M(n)|\cdot n^{-4/3+o(1)},
 \]
-and, established separately,
+and, proved separately,
 $\mathrm{RH}\iff\sigma_{\min}(\Rc_n)\ll_\varepsilon n^{-1+\varepsilon}$,
-two-sided and unconditional. The forward implication does not use the displayed
-upper bound, which under RH would give only $n^{-5/6+\varepsilon}$; it uses the
-collapsed equality $\sigma_{\min}(\Rc_n)=|M(n)|n^{-3/2+o(1)}$, valid as soon as
-$|M(n)|/\|w\|\to0$, which RH itself supplies. The mechanism is that the entries of the vector
+two-sided and unconditional. The bracket collapses to
+$\sigma_{\min}(\Rc_n)=|M(n)|n^{-3/2+o(1)}$ once $|M(n)|/\|w\|\to0$ --- which RH
+supplies, and which is not known unconditionally. The mechanism is that the entries of the vector
 $\Ac^{-\mathsf T}(\mathbf 1-e_1)$, where $\Ac$ is the unit lower-triangular factor
 of $\Rc_n$, are \emph{exactly} the sums $M(x,y)=\sum_{d\le x,\,\Pm(d)>y}\mu(d)$ of
 the M\"obius function over integers free of small prime factors; the analytic
@@ -451,7 +450,11 @@ $\sigma_{\min}(\Rc_n)=|M(n)|n^{-3/2+o(1)}$.
 
 For the equivalence: if RH holds then $M(n)\ll n^{1/2+\varepsilon}$, which forces
 $|M(n)|/\|w\|\to0$ by Theorem \ref{thm:norm}, so the exact asymptotic is available
-and $\sigma_{\min}\ll n^{-1+2\varepsilon}$. Conversely,
+and $\sigma_{\min}\ll n^{-1+2\varepsilon}$. It is worth noting that the bracket
+alone does not give this: its upper bound combined with RH yields only
+$\sigma_{\min}\ll n^{1/2+\varepsilon}n^{-4/3+o(1)}=n^{-5/6+\varepsilon+o(1)}$,
+which is weaker than $n^{-1+\varepsilon}$. The forward implication genuinely
+needs the collapse, and hence Theorem \ref{thm:norm}. Conversely,
 $\sigma_{\min}\ll_\varepsilon n^{-1+\varepsilon}$ combined with the unconditional
 lower bound forces $M(n)\ll n^{1/2+\varepsilon}$, which is \eqref{eq:rh}. Note
 that the reverse direction uses only the elementary upper bounds on $\|w\|$ and
