@@ -53,9 +53,11 @@ satisfies
   |M(n)|\cdot n^{-3/2+o(1)}\ \le\ \sigma_{\min}(\Rc_n)\ \le\
   |M(n)|\cdot n^{-4/3+o(1)},
 \]
-whence $\mathrm{RH}\iff\sigma_{\min}(\Rc_n)\ll_\varepsilon n^{-1+\varepsilon}$,
-an equivalence that is two-sided and unconditional. The lower bound is attained,
-giving $\sigma_{\min}(\Rc_n)=|M(n)|n^{-3/2+o(1)}$, as soon as
+and, established separately,
+$\mathrm{RH}\iff\sigma_{\min}(\Rc_n)\ll_\varepsilon n^{-1+\varepsilon}$,
+two-sided and unconditional. The forward implication does not use the displayed
+upper bound, which under RH would give only $n^{-5/6+\varepsilon}$; it uses the
+collapsed equality $\sigma_{\min}(\Rc_n)=|M(n)|n^{-3/2+o(1)}$, valid as soon as
 $|M(n)|/\|w\|\to0$, which RH itself supplies. The mechanism is that the entries of the vector
 $\Ac^{-\mathsf T}(\mathbf 1-e_1)$, where $\Ac$ is the unit lower-triangular factor
 of $\Rc_n$, are \emph{exactly} the sums $M(x,y)=\sum_{d\le x,\,\Pm(d)>y}\mu(d)$ of
