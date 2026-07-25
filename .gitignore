@@ -1,0 +1,32 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# OS / editor
+.DS_Store
+*.swp
+*~
+
+# Local agent/editor settings
+.claude/
+
+# Local render/inspection artifacts
+tmp/
+
+# LaTeX build intermediates (the finished PDF stays tracked)
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Pre-publication audit-pass working bundles (local record: raw logs, state
+# diffs, and machine-specific paths). The clean, public closure summary is
+# committed as audit/prepublication-validation.md.
+audit/prepublication-*/
