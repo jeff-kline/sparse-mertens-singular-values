@@ -17,12 +17,20 @@ smallest one is governed by Dickman's function:
 
     |M(n)| n^{-3/2+o(1)}  <=  sigma_min(R_n)  <=  |M(n)| n^{-4/3+o(1)}
 
-    hence   RH  <=>  sigma_min(R_n) << n^{-1+eps}
+    RH  <=>  sigma_min(R_n) << n^{-1+eps}
 
-The equivalence is two-sided and unconditional. The bracket collapses to
-`sigma_min(R_n) = |M(n)| n^{-3/2+o(1)}` as soon as `|M(n)|/||w|| -> 0`, which RH
-itself supplies; that hypothesis is *not* known unconditionally, because the best
-available bounds on `||w||` and on `|M(n)|` do not cross.
+The equivalence is two-sided and unconditional, but it does not follow from the
+bracket alone — the two statements are established separately:
+
+- `<=` is the lower bound rearranged: `|M(n)| <= sigma_min * n^{3/2+o(1)}`.
+- `=>` does **not** go through the displayed upper bound, which under RH yields
+  only `n^{-5/6+eps}`. It goes through the collapsed equality
+  `sigma_min(R_n) = |M(n)| n^{-3/2+o(1)}`, valid as soon as `|M(n)|/||w|| -> 0`;
+  RH supplies exactly that, since `|M(n)|/||w|| << n^{-1/2+eps}`.
+
+That hypothesis is *not* known unconditionally, because the best available bounds
+on `||w||` and on `|M(n)|` do not cross — which is why the unconditional
+statement is a bracket rather than an asymptotic.
 
 The analytic engine is **not new**: it is Alladi's 1982 asymptotic for the
 Moebius function summed over integers free of small prime factors. What is
