@@ -298,6 +298,17 @@ depend on which is right.
    supplies no asymptotic; §5 concerns the **modified** `ℛ_n` and is an
    equivalence. Cited and distinguished at Remark 6a, which also answers their
    posed question for this family. Adjacent, not overlapping.
+1c. **Bordellès & Cloitre, JIPAM 10 (2009), art. 62 — READ 2026-07-25.** The
+   originators of the "σ_min of a triangular factor ⇒ RH" strategy, predating
+   Cheon–Kim by a decade. Their matrix `Γ_n` has
+   `det Γ_n = n! · Σ_{k≤n} μ(k)/k` (the *weighted* Mertens sum), and their
+   Corollary 2.7 gives `σ_min(U_n) ≫ n^{-1+ε} ⇒ PNT`,
+   `σ_min(U_n) ≫ n^{-1/2-ε} ⇒ RH`, for `U_n` the upper triangular factor of an
+   LU decomposition. They compute `U_n^{-1}` explicitly but **do not** determine
+   `σ_min` asymptotically, and observe that general triangular-matrix bounds
+   (e.g. `σ_n ≥ min|a_ii|/2^{n-1}`) are "still very far from the PNT". Cited and
+   distinguished; §5c's `σ_min(𝒜) ≍ n^{-1/2}` is an instance where the arithmetic
+   structure *does* give the exact order.
 2. **Uniformity in `u` — RESOLVED for §§4–5; still OPEN for the sharp shape.**
    Alladi's Theorem 1 is uniform for `2 ≤ y < x`, and at **fixed** `α` its main
    term dominates the error — all that Theorem 2, and hence (5)–(6), require.
