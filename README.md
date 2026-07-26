@@ -38,6 +38,20 @@ established here is the linear algebra — that the entries of a certain
 inverse-matrix vector *are* Alladi's sums, and what that forces about the
 spectrum.
 
+## Independent scorecard
+
+An independent repo-rank pass (2026-07-26, commit `ea277de`) scored four axes
+qualitatively; full reasoning, external-literature checks, and each axis's own
+counter-argument are in
+[`audit/reports/repo-rank-scorecard.md`](audit/reports/repo-rank-scorecard.md).
+
+| Axis | Note |
+| --- | --- |
+| Novelty | Analytic engine (Alladi 1982) is not new; the bridge from it to this matrix family's singular values, and the negative answer to Cheon-Kim's open question, was not located elsewhere — though the repo's own prior-art audit reads the same connection as low-weight bookkeeping. |
+| Depth | Central claims proved and independently re-derived; the proof note lags one already-repaired proof (Prop. 4) and a conditional-hypothesis flag that the paper and README already carry. |
+| Reach | Settles its own equivalence unconditionally and answers a real open question, but portability to sibling RH-linear-algebra criteria (Cheon-Kim, Bordelles-Cloitre) is untried and unclaimed. |
+| Evidence | Most numerical claims reproduce exactly from shipped code, with a genuinely disciplined refuted-conjecture record; the `n=10^7` support for `‖A^{-1}‖/sqrt(n) ~ 0.8499` is not reproducible from anything currently in `code/`. |
+
 ## Main results
 
 - The bracket above, and the two-sided unconditional RH equivalence.
