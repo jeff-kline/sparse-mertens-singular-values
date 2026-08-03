@@ -6,6 +6,7 @@
 \usepackage{booktabs}
 \usepackage[hmargin=1in]{geometry}
 \usepackage{hyperref}
+\hypersetup{hidelinks}
 
 \renewenvironment{abstract}{%
   \small
@@ -33,54 +34,66 @@
 
 \title{The smallest singular value of a sparse Mertens matrix}
 \author{Jeffery Kline}
-\date{\today}
+\date{Release candidate 0.1.0, August 2026}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Redheffer's $(0,1)$ matrix $R_n$ satisfies $\det R_n = M(n) := \sum_{k\le
-n}\mu(k)$, and the Riemann hypothesis is equivalent to $M(n) =
-O(n^{1/2+\varepsilon})$. A substantially sparser $(0,1)$ matrix $\Rc_n$ with the
-same determinant --- about $2.61n$ nonzero entries against Redheffer's $\sim n\log
-n$ --- was introduced in \cite{kline581}, and in \cite{kline584} its two dominant
-\emph{eigenvalues} were shown to be $1\pm\sqrt{\pi(n)}+O(\log\log n)$. We determine
-its \emph{singular values} at both ends. The largest is
-$\sigma_{\max}(\Rc_n)=\sqrt{n}\,(1+O(1/n))$, forced by a single dense row, with
-non-normality gap $\sigma_{\max}/|\lambda_{\max}|\asymp\sqrt{\log n}$. The smallest
-satisfies
+Redheffer's $(0,1)$ matrix has determinant $M(n)=\sum_{k\le n}\mu(k)$. We study a
+much sparser $(0,1)$ matrix $\Rc_n$ with the same determinant: it has about
+$2.61n$ nonzero entries rather than order $n\log n$. We prove that its smallest
+singular value satisfies, unconditionally,
 \[
   |M(n)|\cdot n^{-3/2+o(1)}\ \le\ \sigma_{\min}(\Rc_n)\ \le\
   |M(n)|\cdot n^{-4/3+o(1)},
 \]
-and, proved separately,
-$\mathrm{RH}\iff\sigma_{\min}(\Rc_n)\ll_\varepsilon n^{-1+\varepsilon}$,
-two-sided and unconditional. The bracket collapses to
-$\sigma_{\min}(\Rc_n)=|M(n)|n^{-3/2+o(1)}$ once $|M(n)|/\|w\|\to0$ --- which RH
-supplies, and which is not known unconditionally. The mechanism is that the entries of the vector
-$\Ac^{-\mathsf T}(\mathbf 1-e_1)$, where $\Ac$ is the unit lower-triangular factor
-of $\Rc_n$, are \emph{exactly} the sums $M(x,y)=\sum_{d\le x,\,\Pm(d)>y}\mu(d)$ of
-the M\"obius function over integers free of small prime factors; the analytic
-input is then Alladi's asymptotic $M(x,x^{1/\alpha})\sim x\rho'(\alpha)/\log y$
-with $\rho$ Dickman's function \cite{alladiJNT}, which we cite rather than claim.
-It gives $\|w\|=n^{1+o(1)}$ unconditionally, and that norm is what produces the
-exponent $-3/2$ above.
-Along the way we show $\|\Ac^{-1}\|=n^{1/2+o(1)}$ via a Neumann series that
-terminates after $\sim\log n/\log\log n$ terms, hence
-$\sigma_{\min}(\Ac)=n^{-1/2+o(1)}$; this answers, negatively for this family, a
-question of Cheon and Kim \cite{cheonkim}. We also record why the problem is
-severely pre-asymptotic: several natural conjectures suggested by computation up
-to $n=10^7$ are false, and we identify the finite-range mechanism responsible.
+and that
+$\mathrm{RH}\iff\sigma_{\min}(\Rc_n)\ll_\varepsilon n^{-1+\varepsilon}$.
+The equivalence is two-sided and unconditional. The key identity expresses the
+coordinates of $w=\Ac^{-\mathsf T}(\mathbf 1-e_1)$, for the unit
+lower-triangular factor $\Ac$, as rough-M\"obius sums
+$M(x,y)=\sum_{d\le x,\,\Pm(d)>y}\mu(d)$. Alladi's 1982 asymptotic for these sums
+\cite{alladiJNT} then gives $\|w\|=n^{1+o(1)}$. Under the precise rank-one
+dominance condition
+\[
+ \frac{|M(n)|\,\|\Ac_n^{-1}\|}{\|\mu_n\|\,\|w\|}\longrightarrow0,
+\]
+which follows from RH, the bracket sharpens to
+$\sigma_{\min}(\Rc_n)=|M(n)|n^{-3/2+o(1)}$. At the other end we prove
+$\sigma_{\max}(\Rc_n)=\sqrt n\,(1+O(1/n))$ and
+$\sigma_{\max}/|\lambda_{\max}|\asymp\sqrt{\log n}$. We also prove
+$\|\Ac_n^{-1}\|=n^{1/2+o(1)}$, hence
+$\sigma_{\min}(\Ac_n)=n^{-1/2+o(1)}$, which answers a question of Cheon and Kim
+for this family. The new contribution is the linear-algebraic connection and
+its consequences; the sparse matrix, determinant identity, and analytic
+rough-M\"obius estimate are prior work.
 \end{abstract}
 
 \section{Introduction}\label{sec:intro}
 
-Write $\mu$ for the M\"obius function and
+This paper connects the smallest singular value of a sparse $(0,1)$ matrix to
+the size of the Mertens function. Write $\mu$ for the M\"obius function and
 \[
   M(n) := \sum_{k\le n}\mu(k)
 \]
-for the Mertens function. It is classical that the prime number theorem is
-equivalent to $M(n)=o(n)$, and that the Riemann hypothesis is equivalent to
+for the Mertens function. The main result is the unconditional bracket
+\[
+ |M(n)|n^{-3/2+o(1)}\le \sigma_{\min}(\Rc_n)
+ \le |M(n)|n^{-4/3+o(1)}
+\]
+for the sparse matrix $\Rc_n$ defined below, together with the equivalence
+\[
+ \mathrm{RH}\quad\Longleftrightarrow\quad
+ \sigma_{\min}(\Rc_n)\ll_\varepsilon n^{-1+\varepsilon}.
+\]
+The proof identifies a vector in $\Rc_n^{-1}$ with M\"obius sums over integers
+free of small prime factors and then applies a theorem of Alladi
+\cite{alladiJNT}. The matrix identity is proved here; the analytic estimate is
+prior work.
+
+It is classical that the prime number theorem is equivalent to $M(n)=o(n)$,
+and that the Riemann hypothesis is equivalent to
 \begin{equation}\label{eq:rh}
   M(n) = O(n^{1/2+\varepsilon})\qquad\text{for every }\varepsilon>0 .
 \end{equation}
@@ -89,24 +102,31 @@ $R(i,j)=1$ when $j=1$ or $i\mid j$, and proved $\det R_n = M(n)$. This places
 \eqref{eq:rh} inside linear algebra, and a long line of work has studied the
 spectrum of $R_n$ \cite{bfp,barrettjarvis,vaughanI,vaughanII,cardon,camargo}.
 
-Much less is known about \emph{singular} values; Cl\'ement and Steinerberger
-\cite{clementsteinerberger} say so explicitly, and treat only the largest. The
-idea of routing the Riemann hypothesis through a smallest singular value appears
-to originate with Bordell\`es and Cloitre \cite{bordellescloitre}, who study an
+Much less is known about \emph{singular} values. Cl\'ement and Steinerberger
+\cite{clementsteinerberger} treat the largest singular value of Redheffer's
+matrix. Hilberdink \cite[\S4(b)]{hilberdink} proves an
+$n^{-1/2}$ smallest-singular-value asymptotic for the dense divisibility
+triangular factor underlying Redheffer's matrix. That result is close in
+exponent but does not treat the sparse forest factor $\Ac_n$ or the modified
+matrix $\Rc_n$. The idea of routing the Riemann hypothesis through a smallest singular
+value appears to originate with Bordell\`es and Cloitre
+\cite{bordellescloitre}, who study an
 integer matrix $\Gamma_n$ with $\det\Gamma_n = n!\sum_{k\le n}\mu(k)/k$ and
 deduce from an $LU$ decomposition that a lower bound
 $\sigma_{\min}(U_n)\gg_\varepsilon n^{-1/2-\varepsilon}$ would imply RH; Cheon
 and Kim \cite{cheonkim} give a criterion of the same shape for the triangular
 factor of a Mertens equimodular matrix, and ask which matrices satisfy it. In
 both cases the criterion is a \emph{sufficient condition} awaiting verification,
-and in neither is the relevant singular value determined. The present paper
-determines the singular values of one family at both ends, and answers the
-Cheon--Kim question for it.
+and in neither is the relevant singular value determined. Here the modified
+matrix yields a two-sided equivalence, while the unmodified triangular factor
+fails the Cheon--Kim condition. These are statements about this particular
+sparse family, not a general singular-value criterion for Mertens matrices.
 
 \subsection{The matrix}
 
 The following much sparser $(0,1)$ matrix with the same determinant was
-introduced in \cite[\S1]{kline584}. Let $\Pp(i)$ denote the largest prime factor
+introduced in \cite{kline581} and restated in \cite[\S1]{kline584}. Let
+$\Pp(i)$ denote the largest prime factor
 of $i>1$, and set
 \begin{equation}\label{eq:defA}
   \Ac(i,j) :=
@@ -194,8 +214,12 @@ Unconditionally,
   |M(n)|\cdot n^{-3/2+o(1)}\ \le\ \sigma_{\min}(\Rc_n)\ \le\
   |M(n)|\cdot n^{-4/3+o(1)},
 \]
-the upper bound needing nothing beyond the prime number theorem (Remark
-\ref{rem:hierarchy}). If moreover $|M(n)|/\|w\|\to0$, the two collapse to
+the upper bound using the classical quantitative prime number theorem (Remark
+\ref{rem:hierarchy}). If moreover
+\[
+ \frac{|M(n)|\,\|\Ac_n^{-1}\|}{\|\mu_n\|\,\|w\|}\longrightarrow0,
+\]
+the two collapse to
 $\sigma_{\min}(\Rc_n)=|M(n)|\cdot n^{-3/2+o(1)}$. In either case
 \[
   \text{RH}\quad\Longleftrightarrow\quad
@@ -203,19 +227,20 @@ $\sigma_{\min}(\Rc_n)=|M(n)|\cdot n^{-3/2+o(1)}$. In either case
 \]
 \end{theorem}
 
-The equivalence is two-sided and unconditional: ``$\Longleftarrow$'' is the
-unconditional lower bound rearranged, and ``$\Longrightarrow$'' may assume RH,
-which supplies $|M(n)|/\|w\|\to0$ and hence the exact asymptotic. The hypothesis
-$|M(n)|/\|w\|\to0$ is not known unconditionally: the best available bounds,
-$\|w\|\gg_\varepsilon n^{1-\varepsilon}$ from Theorem \ref{thm:norm} and
-$|M(n)|\ll n\exp(-c(\log n)^{3/5}(\log\log n)^{-1/5})$, do not cross.
+The equivalence is two-sided and unconditional. The implication
+``$\Longleftarrow$'' is the unconditional lower bound rearranged. For
+``$\Longrightarrow$'', RH makes the displayed rank-one dominance condition hold
+and hence supplies the exact asymptotic. The simpler condition
+$|M(n)|/\|w\|\to0$ is not used as a substitute: the proof also has to control
+$\|\Ac_n^{-1}\|/\|\mu_n\|=n^{o(1)}$.
 
 We stress what is and is not
 content here. That $\det\Rc_n=M(n)$ is \cite{kline581,kline584}, so
 ``$\mathrm{RH}\iff|\det\Rc_n|\ll n^{1/2+\varepsilon}$'' is immediate and carries
 nothing new. The content of Theorem \ref{thm:main} is the conversion factor
 $\|\mu_n\|\,\|w\| = n^{3/2+o(1)}$, that is, Theorem \ref{thm:norm}: without it the
-equivalence is unavailable in either direction at the stated exponent.
+forward implication, and hence the full equivalence, is unavailable at the
+stated exponent.
 
 At the other extreme, and for the unmodified factor:
 
@@ -231,8 +256,9 @@ the method: the terminating Neumann series bounds $\|\Ac_n^{-1}\|$ by
 $\sum_r\sqrt{\pi_r'(n)}$, and that sum exceeds $\sqrt n$ by a factor
 $1.55,1.62,1.67,1.72,1.76$ at $n=10^4,\dots,10^8$ --- monotone increasing, so the
 argument cannot deliver $\asymp\sqrt n$ however carefully it is run. Numerically
-$\|\Ac_n^{-1}\|/\sqrt n$ is flat at $0.8499$ out to $n=10^7$, and we expect
-$\|\Ac_n^{-1}\|\asymp\sqrt n$; we do not prove it.
+$\|\Ac_n^{-1}\|/\sqrt n$ is nearly constant over the dense-matrix range reported
+in \S\ref{sec:numerics}, suggesting $\|\Ac_n^{-1}\|\asymp\sqrt n$; we do not
+prove that sharper estimate.
 
 The last assertion answers a question of \cite{cheonkim} for this family; see
 Remark \ref{rem:cheonkim}.
@@ -249,7 +275,8 @@ informally, that
   T}$ is, for all $n$, almost in the span of the rows of $B$.}
 \end{quote}
 That distance is $|\det \Rc_n|/\sqrt{\det BB^{\mathsf T}} = |M(n)|/\|\mu_n\| \asymp
-|M(n)|n^{-1/2}$. Theorem \ref{thm:main} completes the picture quantitatively:
+|M(n)|n^{-1/2}$. Under the rank-one dominance condition of Theorem
+\ref{thm:main}, the comparison becomes
 \begin{equation}\label{eq:compare}
   \underbrace{\operatorname{dist}(\mathbf 1^{\mathsf T},\ \mathrm{rowspan}\,B)}_{\textstyle
   =\ |M(n)|/\|\mu_n\|\ \asymp\ |M(n)|n^{-1/2}}
@@ -258,10 +285,9 @@ That distance is $|\det \Rc_n|/\sqrt{\det BB^{\mathsf T}} = |M(n)|/\|\mu_n\| \as
   |M(n)|n^{-3/2+o(1)}} .
 \end{equation}
 The first is the distance from one particular vector to a hyperplane; the second
-is the minimum over all unit directions. They differ by $\|w\|=n^{1+o(1)}$: the
-matrix is a full factor of $n^{1+o(1)}$ closer to singular than that single
-direction reveals, and quantifying the discrepancy is exactly what requires
-Alladi's estimates.
+is the minimum over all unit directions. In the dominance regime they differ by
+$\|w\|=n^{1+o(1)}$. The unconditional bracket retains the same lower exponent
+but does not assert this exact comparison at every $n$.
 
 \subsection{What is cited and what is proved}
 
@@ -271,9 +297,9 @@ draws on p.~87 and that we record in Remark \ref{rem:buchstab};
 \cite{alladiTAMS} is its companion. What is
 established here is the linear algebra: Theorem \ref{thm:closed}, which identifies
 $w$ with Alladi's sums, and the consequences \ref{thm:norm}--\ref{thm:max}. All
-numerical claims are reproduced by the scripts in \texttt{code/}; the two
-independent derivations of Theorem \ref{thm:alladi} obtained while this work was
-in progress, and the prior-art audit, are recorded in \texttt{audit/reports/}.
+numerical claims are reproduced by the scripts in \texttt{code/}. The bounded
+literature record and the scope of earlier AI-assisted checks are recorded in
+\texttt{audit/reports/}; those checks are not peer review.
 
 \section{Notation and cited results}\label{sec:prelim}
 
@@ -371,14 +397,16 @@ over \emph{all} $y$-smooth $a$, not merely squarefree ones.
 
 \begin{proof}[Proof of Theorem \ref{thm:norm}]
 \emph{Upper bound.} Trivially $|M(x,y)|\le x$, so by Theorem \ref{thm:closed}
-$\|w\|^2\le\sum_{j\le n}(n/j)^2\le\zeta(2)n^2$, giving
+$\|w\|^2\le\sum_{j\le n}(n/j)^2\le\zeta(2)n^2$. Therefore
 $\|w\|\le (\pi/\sqrt6)\,n$.
 
 \emph{Lower bound.} Fix $\alpha>1$ and let $j=p$ run over the primes in
 $(n^{1/(\alpha+1)},2n^{1/(\alpha+1)}]$. For such $p$ we have $x=n/p$, $y=p$ and
 $\log x/\log y=\alpha+O(1/\log n)$, so Theorem \ref{thm:alladi} applies at fixed
 $\alpha$: its main term is $x\rho'(\alpha)/\log y\asymp_\alpha x/\log y$ and
-dominates the error $O(x\alpha^2/\log^2 y)$ by a factor $\log y$. Since
+dominates the error $O(x\alpha^2/\log^2 y)$ by a factor $\log y$; the other
+main term $y/\log y$ is lower order because
+$y/x=n^{-(\alpha-1)/(\alpha+1)+o(1)}$. Since
 $\rho>0$, $|w_p| = |M(n/p,p)| \gg_\alpha n^{\alpha/(\alpha+1)}/\log n$. By the
 prime number theorem there are $\gg n^{1/(\alpha+1)}/\log n$ such primes, and by
 Theorem \ref{thm:closed} the quantity $\|w\|^2$ is a sum of squares, so
@@ -396,8 +424,11 @@ $\varepsilon>0$.
 
 \begin{remark}[the refined shape, open]\label{rem:shape}
 Both a saddle-point analysis and the numerics of \S\ref{sec:numerics} indicate
-$\|w\| = n\exp\bigl(-(1+o(1))\sqrt{\log n\log\log n}\,\bigr)$, the maximising
-subfamily sitting at $\alpha\asymp\sqrt{\log n/\log\log n}$. This is \emph{not}
+\[
+ \|w\| = n\exp\bigl(-(1+o(1))\sqrt{\log n\log\log n}\,\bigr),
+\]
+with the maximising subfamily at
+$\alpha\asymp\sqrt{\log n/\log\log n}$. This is \emph{not}
 established. Theorem \ref{thm:alladi} does not reach that range: as Alladi notes
 \cite[p.~87]{alladiJNT}, since $\rho'(\alpha)=-\exp\{-\alpha\log\alpha-\alpha\log\log\alpha+O(\alpha)\}$
 for $\alpha>3$, ``the main terms of Theorem 1 are smaller than the error term when
@@ -411,10 +442,16 @@ sharpen the $o(1)$ in Theorems \ref{thm:norm} and \ref{thm:main}.
 
 \begin{proposition}\label{prop:sm}
 $\Rc_n^{-1}=\Ac_n^{-1}-\mu_n w^{\mathsf T}/M(n)$ whenever $M(n)\ne0$. If moreover
-$|M(n)|/\|w\|\to0$, then
+\begin{equation}\label{eq:dominance}
+ \frac{|M(n)|\,\|\Ac_n^{-1}\|}{\|\mu_n\|\,\|w\|}\longrightarrow0,
+\end{equation}
+then
 \begin{equation}\label{eq:factorisation}
   \sigma_{\min}(\Rc_n)\cdot\|\mu_n\|\cdot\|w\| \;=\; |M(n)|\,(1+o(1)).
 \end{equation}
+Here the limits are understood along indices with $M(n)\ne0$. At an index with
+$M(n)=0$, the matrix $\Rc_n$ is singular and the corresponding zero-valued
+identity is immediate.
 \end{proposition}
 
 \begin{proof}
@@ -423,34 +460,45 @@ stated inverse, using $\Ac_n^{-1}e_1=\mu_n$ and $(\mathbf 1-e_1)^{\mathsf
 T}\Ac_n^{-1}=w^{\mathsf T}$, together with $1+(\mathbf
 1-e_1)^{\mathsf T}\Ac_n^{-1}e_1=M(n)$, which is $\det\Rc_n=M(n)$. The rank-one
 term has norm $\|\mu_n\|\|w\|/|M(n)|$, while $\|\Ac_n^{-1}\|=n^{1/2+o(1)}$ by
-Theorem \ref{thm:max}. Their ratio is
-$(\|\mu_n\|/\|\Ac_n^{-1}\|)\cdot\|w\|/|M(n)|$, and the first factor is bounded
-below by a positive constant since $\|\Ac_n^{-1}\|\ge\|\mu_n\|$; so the rank-one
-term dominates precisely when $\|w\|/|M(n)|\to\infty$, which is the hypothesis.
-Then $\sigma_{\min}(\Rc_n)=1/\|\Rc_n^{-1}\|$ gives \eqref{eq:factorisation}.
+Theorem \ref{thm:max}. Condition \eqref{eq:dominance} says exactly that the norm
+of $\Ac_n^{-1}$ is negligible relative to the rank-one term. The reverse
+triangle inequality therefore gives
+$\|\Rc_n^{-1}\|=\|\mu_n\|\|w\|/|M(n)|\,(1+o(1))$, and
+$\sigma_{\min}(\Rc_n)=1/\|\Rc_n^{-1}\|$ gives
+\eqref{eq:factorisation}.
 \end{proof}
 
-The hypothesis is harmless in the application --- RH supplies it at once --- but it
-is not known unconditionally, since the best lower bound for $\|w\|$ and the best
-upper bound for $|M(n)|$ do not cross. This is the one place where the chain is
-conditional, and it is why Theorem \ref{thm:main} is stated as a bracket.
+RH supplies \eqref{eq:dominance}: for any fixed $0<\varepsilon<1/2$ its left-hand
+side is $n^{-1/2+\varepsilon+o(1)}$. The condition is not known unconditionally.
+This is why Theorem \ref{thm:main} gives an unconditional bracket rather than an
+unconditional asymptotic.
 
 \begin{proof}[Proof of Theorem \ref{thm:main}]
+If $M(n)=0$ then $\Rc_n$ is singular and the two bounds are immediate, so assume
+$M(n)\ne0$.
 By Theorem \ref{thm:588}, $\|\mu_n\| = \sqrt{6n/\pi^2}\,(1+o(1)) = n^{1/2+o(1)}$,
 and by Theorem \ref{thm:norm}, $\|w\|=n^{1+o(1)}$.
 
-\emph{Lower bound.} The elementary bounds $\|w\|\le(\pi/\sqrt6)n$ and
-$\|\mu_n\|\le\sqrt n$, with $\sigma_{\min}(\Rc_n)\ge|M(n)|/(\|\mu_n\|\|w\|)$ from
-the rank-one representation, give $\sigma_{\min}(\Rc_n)\ge|M(n)|n^{-3/2+o(1)}$
-unconditionally. \emph{Upper bound.} Remark \ref{rem:hierarchy} gives
-$\sigma_{\min}(\Rc_n)\ll|M(n)|n^{-4/3+o(1)}$ from the prime number theorem alone.
-If $|M(n)|/\|w\|\to0$, Proposition \ref{prop:sm} applies and substituting the two
-norms into \eqref{eq:factorisation} collapses the bracket to
+\emph{Lower bound.} From the inverse formula and the triangle inequality,
+\[
+ \sigma_{\min}(\Rc_n)
+ \ge \frac{|M(n)|}{|M(n)|\,\|\Ac_n^{-1}\|+\|\mu_n\|\,\|w\|}.
+\]
+The trivial bound $|M(n)|\le n$, Theorem \ref{thm:max}, and the elementary bounds
+$\|w\|\le(\pi/\sqrt6)n$ and $\|\mu_n\|\le\sqrt n$ make the denominator
+$n^{3/2+o(1)}$. Thus
+$\sigma_{\min}(\Rc_n)\ge|M(n)|n^{-3/2+o(1)}$ unconditionally.
+\emph{Upper bound.} Remark \ref{rem:hierarchy} gives
+$\sigma_{\min}(\Rc_n)\ll|M(n)|n^{-4/3+o(1)}$ from the classical
+zero-free-region bound for the Mertens function.
+If \eqref{eq:dominance} holds, Proposition \ref{prop:sm} applies and substituting
+the two norms into \eqref{eq:factorisation} collapses the bracket to
 $\sigma_{\min}(\Rc_n)=|M(n)|n^{-3/2+o(1)}$.
 
-For the equivalence: if RH holds then $M(n)\ll n^{1/2+\varepsilon}$, which forces
-$|M(n)|/\|w\|\to0$ by Theorem \ref{thm:norm}, so the exact asymptotic is available
-and $\sigma_{\min}\ll n^{-1+2\varepsilon}$. It is worth noting that the bracket
+For the equivalence: if RH holds then $M(n)\ll n^{1/2+\varepsilon}$; together
+with $\|\Ac_n^{-1}\|=n^{1/2+o(1)}$, $\|\mu_n\|=n^{1/2+o(1)}$, and
+$\|w\|=n^{1+o(1)}$, this gives \eqref{eq:dominance}. The exact asymptotic is
+therefore available and $\sigma_{\min}\ll n^{-1+2\varepsilon}$. It is worth noting that the bracket
 alone does not give this: its upper bound combined with RH yields only
 $\sigma_{\min}\ll n^{1/2+\varepsilon}n^{-4/3+o(1)}=n^{-5/6+\varepsilon+o(1)}$,
 which is weaker than $n^{-1+\varepsilon}$. The forward implication genuinely
@@ -462,27 +510,55 @@ $\|\mu_n\|$; the forward direction is what Theorem \ref{thm:norm} buys.
 \end{proof}
 
 \begin{remark}
-$\Rc_n$ is singular exactly when $M(n)=0$, which occurs infinitely often, so
-$\sigma_{\min}(\Rc_n)=0$ for infinitely many $n$ and no nontrivial unconditional
-lower bound is available. Only upper bounds are meaningful, which is why test
-vectors and projections are the natural tool; see Remark \ref{rem:hierarchy}.
+$\Rc_n$ is singular exactly when $M(n)=0$. Thus no positive lower bound can hold
+at those indices; the lower side of Theorem \ref{thm:main} is scaled by
+$|M(n)|$. Test vectors and projections provide the complementary upper bounds;
+see Remark \ref{rem:hierarchy}.
 \end{remark}
 
 \begin{remark}[a hierarchy of cheaper bounds]\label{rem:hierarchy}
+Assume $M(n)\ne0$; when $M(n)=0$ the asserted upper bounds are immediate.
 For any orthogonal projection $Q$ one has $\|\Rc_n^{-1}\|\ge\|\Rc_n^{-1}Q\|$, and
 different choices of $Q$ recover successively sharper bounds at successively
 higher cost. Taking the single test vector $\mu_n/\|\mu_n\|$ gives
-$\sigma_{\min}\le|M(n)|/\|\mu_n\|$, which is \eqref{eq:compare} and is weaker than
-the truth by exactly $\|w\|$. Taking $Q$ of rank one at an index $j=p$ with
-$p\approx n^{1/3}$ --- where Corollary \ref{cor:trichotomy} applies and $w_p$ is an
-\emph{exact} difference of prime counts --- already gives $\sigma_{\min}\ll
-|M(n)|n^{-7/6+o(1)}$ using only the prime number theorem. Summing Corollary
-\ref{cor:trichotomy} over the whole range $n^{1/3}\le p\le n^{1/2}$ gives
-$\sigma_{\min}\ll|M(n)|n^{-4/3+o(1)}$, still with no input beyond PNT. Only the
-last step from $n^{-4/3}$ to $n^{-3/2}$ requires Theorem \ref{thm:alladi}. In
-particular, combining the third bound with the unconditional $M(n)\ll
-n\exp(-c\sqrt{\log n})$ yields the clean estimate $\sigma_{\min}(\Rc_n)\ll
-n^{-1/3+o(1)}$ by elementary means.
+$\sigma_{\min}\le|M(n)|/\|\mu_n\|$. Under \eqref{eq:dominance}, comparison with
+\eqref{eq:factorisation} shows that this is weaker by a factor
+$\|w\|(1+o(1))$.
+
+For an unconditional sharper bound, let $Q$ project onto prime coordinates
+$p\in[n^{1/3},2n^{1/3}]$. Corollary \ref{cor:trichotomy} and the prime number
+theorem give
+\[
+ |w_p|=\pi(n/p)-\pi(p)-1=n^{2/3+o(1)},\qquad
+ \|Qw\|=n^{5/6+o(1)}.
+\]
+The closed form for $\Ac_n^{-1}$ shows that its column indexed by $p$ is
+supported on squarefree $k$ whose least prime factor is $p$. These supports are
+disjoint for distinct primes, and therefore
+\[
+ \|\Ac_n^{-1}Q\|
+ =\max_p\sqrt{1+\pi(n/p)-\pi(p)}=n^{1/3+o(1)}.
+\]
+Using the inverse formula, the reverse triangle inequality, and the classical
+zero-free-region bound \cite{leeleong}
+$|M(n)|\ll n\exp(-c\sqrt{\log n})$, we obtain
+the explicit domination ratio
+\[
+ \frac{|M(n)|\,\|\Ac_n^{-1}Q\|}
+      {\|\mu_n\|\,\|Qw\|}
+ \ll \frac{|M(n)|\log n}{n}=o(1).
+\]
+Consequently
+\[
+ \|\Rc_n^{-1}Q\|
+ \ge \frac{\|\mu_n\|\,\|Qw\|}{|M(n)|}-\|\Ac_n^{-1}Q\|
+ =\frac{n^{4/3+o(1)}}{|M(n)|}.
+\]
+Thus $\sigma_{\min}(\Rc_n)\ll|M(n)|n^{-4/3+o(1)}$. The final step from
+$n^{-4/3}$ to the conditional $n^{-3/2}$ asymptotic requires the full estimate
+for $\|w\|$ from Theorem \ref{thm:alladi}. Combining the unconditional upper
+bound with the same zero-free-region estimate gives
+$\sigma_{\min}(\Rc_n)\ll n^{-1/3+o(1)}$.
 \end{remark}
 
 \section{The largest singular value, and the unmodified factor}\label{sec:max}
@@ -529,7 +605,11 @@ $S^{\,\omega_{\max}(n)+1}=0$ and the Neumann series
 $\Ac_n^{-1}=\sum_{r\le\omega_{\max}(n)}(-S)^r$ \emph{terminates}. Row sums of $S^r$
 are at most $1$ and its column sums are $\pi_r'(n)$, the number of squarefree $k\le
 n$ with $\omega(k)=r$; so $\|S^r\|\le\sqrt{\pi_r'(n)}$ and
-$\|\Ac_n^{-1}\|\le\sum_r\sqrt{\pi_r'(n)} = n^{1/2+o(1)}$. Conversely
+$\|\Ac_n^{-1}\|\le\sum_r\sqrt{\pi_r'(n)}$. There are at most
+$1+\lfloor\log_2 n\rfloor$ nonzero summands and
+$\sum_r\pi_r'(n)\le n$, so Cauchy--Schwarz gives
+$\sum_r\sqrt{\pi_r'(n)}\le\sqrt{(1+\lfloor\log_2 n\rfloor)n}
+=n^{1/2+o(1)}$. Conversely
 $\|\Ac_n^{-1}\|\ge\|\Ac_n^{-1}e_1\|=\|\mu_n\|\asymp\sqrt n$ by Theorem
 \ref{thm:588}. Finally $\sigma_{\min}(\Ac_n)=1/\|\Ac_n^{-1}\|$.
 \end{proof}
@@ -547,9 +627,9 @@ triangular matrices --- for instance $\sigma_n\ge\min_i|a_{ii}|/2^{\,n-1}$ under
 diagonal dominance hypothesis --- are exponentially weak and ``still very far from
 the PNT''.
 
-Theorem \ref{thm:max} is a case where the arithmetic structure does determine the
-order exactly: for the triangular factor $\Ac_n$ considered here,
-$\sigma_{\min}(\Ac_n)\asymp n^{-1/2}$, obtained not from a general matrix
+Theorem \ref{thm:max} is a case where the arithmetic structure determines the
+exponent up to a subpolynomial factor: for the triangular factor $\Ac_n$
+considered here, $\sigma_{\min}(\Ac_n)=n^{-1/2+o(1)}$, obtained not from a general matrix
 inequality but from the fact that the Neumann series for $\Ac_n^{-1}$ terminates
 after $\sim\log n/\log\log n$ terms. We note in passing that this is precisely
 the exponent appearing in the RH threshold of \cite{bordellescloitre}, though for
@@ -611,15 +691,22 @@ and $0.77970$ at $n=3\cdot10^5,10^6,3\cdot10^6,10^7$, against
 $\sqrt{6/\pi^2}=0.779697$: the squarefree count is already at its asymptotic
 density to five figures across this range.
 
-For Theorem \ref{thm:max}: $\sigma_{\max}(\Rc_n)/\sqrt n$ equals
-$1.00387,1.00191,1.00094,1.00047,1.00023$ at $n=400,\dots,6400$, the excess
-halving at each doubling; $\sigma_{\max}/|\lambda_{\max}|$ equals
-$1.906,2.087,2.262,2.440,2.592$ against $\sqrt{\log n}=2.448,\dots,2.960$; the
-nilpotency index of $S$ is $5,5,5,6$ at $n=500,\dots,3000$;
-$\|\Ac_n^{-1}\|/\sqrt n$ equals $0.853,0.851,0.849,0.850$; and
-$\sigma_{\min}(\Ac_n)\sqrt n$ equals $1.1717,1.1753,1.1773,1.1760$. The quantity
-of Remark \ref{rem:cheonkim} equals $427,851,1699,2552$ against the required
-$O(n^{1/2+\varepsilon})=22,32,45,55$.
+For Theorem \ref{thm:max}, at $n=400,800,1600,3200,6400$ the values of
+$\sigma_{\max}(\Rc_n)/\sqrt n$ are
+\[
+ 1.00387,\quad 1.00191,\quad 1.00094,\quad 1.00046,\quad 1.00023,
+\]
+so the excess roughly halves at each doubling. At the same sizes,
+$\sigma_{\max}/|\lambda_{\max}|$ equals
+\[
+ 1.906,\quad 2.087,\quad 2.262,\quad 2.439,\quad 2.592,
+\]
+against $\sqrt{\log n}=2.448,\dots,2.960$. The nilpotency index of $S$ is
+$5,5,5,6$ at $n=500,\dots,3000$; $\|\Ac_n^{-1}\|/\sqrt n$ equals
+$0.853,0.851,0.849,0.850$; and $\sigma_{\min}(\Ac_n)\sqrt n$ equals
+$1.1717,1.1753,1.1773,1.1760$. The quantity of Remark \ref{rem:cheonkim} equals
+$427,851,1699,2552$; for comparison, $\sqrt n$ equals $22,32,45,55$ at those
+sizes.
 
 For scale, the same non-normality ratio computed for Redheffer's own $R_n$ (built
 directly, and checked against $\det R_n=M(n)$) equals
@@ -648,9 +735,7 @@ under $x$ are still only $1$ and the primes. Dickman's $\rho$ has a corner at $1
 so the relevant integrand has a jump in its derivative there, and the maximiser is
 \emph{pinned} at $\beta=1/3$ until $\log n$ exceeds an explicit threshold. The
 measured mass-mean $\beta$ is $0.3368,0.3364,0.3361,0.3351$ at
-$n=10^5,\dots,10^7$: already drifting, and accelerating. The crossover at which the
-$\alpha=3$ subfamily overtakes the $\alpha=2$ subfamily lies near $n=10^{12}$, far
-beyond any feasible computation.
+$n=10^5,\dots,10^7$: already drifting, and accelerating.
 
 The practical consequence is that the exponent in Theorem \ref{thm:norm} cannot be
 inferred numerically, and any conjecture about $\|w\|$ or $\sigma_{\min}(\Rc_n)$
@@ -667,11 +752,11 @@ analogue of Hildebrand's range for $\Psi(x,y)\sim x\rho(\alpha)$ \cite{hildtenen
 --- or improving the decay in \cite[Thm.~2]{alladiJNT} from
 $\exp\{-(\alpha/2)\log\alpha\}$ to $\exp\{-\alpha\log\alpha\}$.
 \item \textbf{Other families.} By Remark \ref{rem:cheonkim} the present family
-fails the Cheon--Kim criterion because its triangular factor is poorly
-conditioned, $\sigma_{\min}(\Ac_n)\asymp n^{-1/2}$. Is there a family in which
-$\sigma_{\min}(L_n)\gg n^{-\varepsilon}$? Theorem \ref{thm:max} shows the
-obstruction here is that $\|\Ac_n^{-1}\|$ is already attained by its first column,
-namely $\|\mu_n\|$; any candidate family must avoid that. The same question for
+fails the Cheon--Kim criterion because its triangular factor satisfies
+$\sigma_{\min}(\Ac_n)=n^{-1/2+o(1)}$. Is there a family in which
+$\sigma_{\min}(L_n)\gg n^{-\varepsilon}$? Here the first column of
+$\Ac_n^{-1}$ already supplies the lower bound $\|\Ac_n^{-1}\|\gg\sqrt n$; any
+candidate family must avoid an analogous obstruction. The same question for
 the matrix $U_n$ of \cite{bordellescloitre} appears to be open, and Theorem
 \ref{thm:max} suggests that a termination argument for the relevant Neumann
 series, rather than a general triangular-matrix inequality, is the tool to try.
@@ -720,17 +805,13 @@ Linear Algebra Appl.\ 572 (2019) 252--272.
 F.~Cl\'ement, S.~Steinerberger, \emph{On the largest singular vector of the
 Redheffer matrix}, Linear Algebra Appl.\ 725 (2025) 96--114.
 
-\bibitem{debruijn}
-N.~G.~de Bruijn, \emph{On the number of positive integers $\le x$ and free of
-prime factors $>y$}, Nederl.\ Akad.\ Wetensch.\ Proc.\ Ser.\ A 54 (1951) 50--60.
-
-\bibitem{dickman}
-K.~Dickman, \emph{On the frequency of numbers containing prime factors of a
-certain relative magnitude}, Ark.\ Mat.\ Astr.\ Fys.\ 22 (1930) 1--14.
-
 \bibitem{hildtenen}
 A.~Hildebrand, G.~Tenenbaum, \emph{Integers without large prime factors},
 J.\ Th\'eor.\ Nombres Bordeaux 5 (1993) 411--484.
+
+\bibitem{hilberdink}
+T.~W.~Hilberdink, \emph{Singular values of multiplicative Toeplitz matrices},
+Linear Multilinear Algebra 65 (2017) 813--829.
 
 \bibitem{kline581}
 J.~Kline, \emph{A sparser matrix representation of the Mertens function}, Linear
@@ -747,6 +828,10 @@ Linear Algebra Appl.\ 588 (2020) 224--237.
 \bibitem{limathias}
 C.-K.~Li, R.~Mathias, \emph{The determinant of the sum of two matrices},
 Bull.\ Austral.\ Math.\ Soc.\ 52 (1995) 425--429.
+
+\bibitem{leeleong}
+E.~S.~Lee, N.~Leong, \emph{New explicit bounds for Mertens function and the
+reciprocal of the Riemann zeta-function}, arXiv:2208.06141v4 (2024).
 
 \bibitem{redheffer}
 R.~Redheffer, \emph{Eine explizit l\"osbare Optimierungsaufgabe}, Numerische

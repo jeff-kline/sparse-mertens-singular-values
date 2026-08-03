@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "Please cite Version 0.1.0 of this research repository."
+title: "The smallest singular value of a sparse Mertens matrix"
+type: software
+version: 0.1.0
+authors:
+  - family-names: Kline
+    given-names: Jeffery
+repository-code: "https://github.com/jeff-kline/sparse-mertens-singular-values"
+url: "https://github.com/jeff-kline/sparse-mertens-singular-values"
+license: GPL-3.0-only
+abstract: >-
+  A proof and verification repository for unconditional two-sided bounds on
+  the smallest singular value of a sparse Mertens matrix, a two-sided
+  singular-value criterion equivalent to the Riemann hypothesis, and endpoint
+  estimates for the modified matrix and its triangular factor.
+keywords:
+  - Mertens function
+  - singular values
+  - Redheffer matrix
+  - Riemann hypothesis
+  - Moebius function
+  - Dickman function

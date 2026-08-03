@@ -10,7 +10,7 @@ in a fresh venv. Synthesis below is by the orchestrating session, not an
 average of the four. Per the repo-rank skill's own privacy rule, numeric
 scores are never written into this repository; this file records the
 qualitative reasoning only. A private numeric log is kept outside this
-repo's tree, at `~/.claude/skills/repo-rank/scores-log.md`, keyed to this
+repo's tree, in an auditor-local private score log keyed to this
 same commit.
 
 ## Novelty

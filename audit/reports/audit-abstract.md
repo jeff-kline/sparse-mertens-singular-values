@@ -1,7 +1,7 @@
 # Abstract audit — sparse-mertens-singular-values.tex
 
 Scope: `abstract` environment (lines 38–67) checked against the full body (lines 1–668)
-of `~/Documents/sparse-mertens-singular-values/paper/sparse-mertens-singular-values.tex`,
+of the repository's `paper/sparse-mertens-singular-values.tex`,
 plus supporting files in the sibling repo (`proofs/smallest-singular-value.md`, `README.md`,
 `audit/reports/`) read for cross-verification only (not edited, no git commands run).
 

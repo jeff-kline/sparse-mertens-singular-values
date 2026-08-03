@@ -1,10 +1,12 @@
 # Audit ledger
 
 Adversarial audit of `paper/sparse-mertens-singular-values.tex`, run 2026-07-25
-as five cold agents on disjoint axes, each tasked to break its axis rather than
-summarize it. Every axis returned a per-claim table with stable IDs and decisive
-evidence; those tables are the detailed record and live in `audit/reports/`.
-This file is the index and the resolution status.
+as five process-separated AI lanes on disjoint axes, each tasked to break its
+axis rather than summarize it. This separation is evidence about the checking
+process, not independent expert validation or peer review. Every axis returned
+a per-claim table with stable IDs and decisive evidence; those tables are the
+detailed record and live in `audit/reports/`. This file is the index and the
+resolution status.
 
 ## Verdicts
 
@@ -21,10 +23,10 @@ Per-claim tables: math §appendix (44 rows), citations §J (50 rows), numerics
 coverage). All include the CONFIRMED/VERIFIED rows, so each table doubles as a
 coverage record.
 
-## Must-fix items and their resolution
+## Historical must-fix items and their resolution
 
-All verified independently by the coordinator before being applied — the
-auditors' summaries were not taken at face value.
+The release coordinator rechecked each disposition before applying it; the AI
+lane summaries were not taken at face value.
 
 | # | Finding | Axis | Resolution |
 |---|---|---|---|
@@ -35,21 +37,39 @@ auditors' summaries were not taken at face value.
 | 5 | "was introduced in `\cite{kline584}`" — priority claim contradicted by its own sources | citations | **FIXED.** LAA 584 p. 410 and LAA 588 p. 226 both defer to Kline, LAA **581** (2019) 354–366. Added as `\bibitem{kline581}`; title taken verbatim from LAA 584's reference [9]. |
 | 6 | Thm 4 (`thm:max`): statement `σ_max=√n(1+O(1/n))` **true**, proof delivers only `1+O(1/√log n)` | math | **FIXED** with a repaired proof, verified before adoption: on the Gram matrix, `b_k ∈ {1,2}` exactly, so `‖b‖²=3Q(n)+n−4 ≤ 4n`, `‖C‖ ≤ (1+√π(n))² = o(n)`, and the Schur-complement identity gives `λ_max = n+O(1)`. Measured `λ_max(RRᵀ)−n → 2.8238 = 1+18/π²`, matching `lim‖b‖²/n`. |
 | 7 | Thm 4: `‖𝒜ⁿ⁻¹‖ ≍ √n` unproved — the method **provably cannot** reach `≍` | math | **FIXED** by weakening to `n^{1/2+o(1)}` (and `σ_min(𝒜)=n^{−1/2+o(1)}`). `Σ_r√(π_r′(n))/√n = 1.55,1.62,1.67,1.72,1.76` at `n=10⁴…10⁸`, monotone increasing. Conjecture recorded with its numerical support (`0.8499`, flat to `10⁷`). Cheon–Kim answer survives: `n^{1+o(1)}` is still not `O(n^{1/2+ε})`. |
-| 8 | Prop (Sherman–Morrison): the `(1+o(1))` needs `\|M(n)\|/‖w‖→0`, which is **not known unconditionally** — the best bounds do not cross | math | **FIXED.** Hypothesis added to the Proposition. Thm 3 restated as an unconditional bracket `\|M(n)\|n^{−3/2+o(1)} ≤ σ_min ≤ \|M(n)\|n^{−4/3+o(1)}` (upper bound from PNT alone, already in `rem:hierarchy`), collapsing to equality under the hypothesis. **The RH equivalence remains unconditional.** |
+| 8 | Prop. 5 (Sherman–Morrison): the rank-one `(1+o(1))` needs a dominance hypothesis and is not known unconditionally | math | **CORRECTED AGAIN DURING RELEASE PREPARATION, 2026-08-03.** The earlier repair used the insufficient condition `\|M(n)\|/‖w‖→0` and reversed the implication from `‖A^{-1}‖≥‖μ‖`. The paper now uses the exact condition `\|M(n)\|‖A^{-1}‖/(‖μ‖‖w‖)→0`. RH implies it, so the RH equivalence remains unconditional. The lower bracket retains the `\|M(n)\|‖A^{-1}‖` term before applying growth bounds. |
 | 9 | Thm 3's closing sentence swaps which direction uses Thm 2 | math | **FIXED.** The *reverse* direction uses the elementary upper bounds; the *forward* is what `thm:norm` buys. |
 | 10 | Thm 1's `‖w‖²` display wrong at `j=1` (gives `M(n)²`, should be `(M(n)−1)²`); `P(1)` never defined | math | **FIXED.** `j=1` split out of the sum; convention `P(1):=1` stated. |
 | 11 | Buchstab contrast attributed to Alladi — "Buchstab", "ω", "Φ(x,y)" appear **nowhere** in his JNT paper | citations | **FIXED.** Alladi is now credited only with the `Ψ(x,y)`/`ρ'` contrast he actually draws (p. 87); the Buchstab comparison is marked as not his. The clause resting on the unreachable TAMS sequel is gone. |
 | 12 | "All values below are produced by the scripts in `code/`" — false for 7 printed quantities; no `svd`/eigenvalue call in any of the 7 scripts, and `code/out/` empty | numerics | **FIXED** by supplying the missing code rather than weakening the claim: new `code/spectra.py` computes every singular-value, eigenvalue and nilpotency figure from explicitly built matrices. Reproduces the σ_max column exactly and `det = M(n)` as a build check. |
+| 13 | The `n^{-4/3+o(1)}` upper bracket had the right exponent but omitted control of `A^{-1}Q` in the projected inverse | release proof audit | **FIXED 2026-08-03.** The paper now projects onto primes `p∈[n^{1/3},2n^{1/3}]`, proves their inverse columns have disjoint support, obtains `‖A^{-1}Q‖=n^{1/3+o(1)}` and `‖Qw‖=n^{5/6+o(1)}`, and uses the classical zero-free-region bound for `M(n)` to establish rank-one dominance and the advertised upper bracket. |
+| 14 | Final Opus reconstruction found four proof-hygiene omissions but no mathematical break | release proof audit | **FIXED AND CLOSED 2026-08-03.** The proof now controls Alladi's secondary term, supplies the Cauchy--Schwarz step for the inverse-norm sum, handles singular indices explicitly, and accurately names the zero-free-region input. The frozen-source recheck passed; see `reports/release-proof-closure.md`. |
 
 ## Gates
 
-- [x] Mathematics — all must-fix applied
+- [x] Mathematics — reconstruction and frozen-source closure passed; see `reports/release-proof-closure.md`
 - [x] Citations — all must-fix applied
 - [x] Numerics — all must-fix applied; missing script supplied
 - [x] Abstract — rewritten; Thm 2 (`‖w‖=n^{1+o(1)}`) restored, having been absent though the body calls it "the content"
 - [x] Privacy — CLEAR-TO-PUSH, 9/9
-- [x] Paper rebuilds — 0 errors, 0 undefined references, 12 pp.
+- [x] Paper rebuilds — 0 errors, 0 undefined references, 13 pp.; two deterministic builds byte-identical
 - [ ] **Commit authorization from the author** — required before any `git commit`
+
+## Release-preparation audit, 2026-08-03
+
+The public-standard release pass reopened A1 after finding two defects not
+closed by the July audit: the insufficient Sherman--Morrison dominance
+condition and the missing projected-inverse estimate behind the upper bracket.
+The README, abstract, introduction, theorem statements, proof, and proof map
+were aligned to the corrected claims. Two process-separated AI proof
+reconstructions found no mathematical break; the later Opus lane nevertheless
+returned PARTIAL because it found four proof-hygiene omissions and audited a
+moving tree. Those four omissions were repaired, and the final recheck passed
+against the frozen source hash recorded in
+`reports/release-proof-closure.md`. A bounded prior-art
+re-audit passed after the Hilberdink comparison was added from the primary
+text. Reproducibility and release-metadata checks are recorded separately in
+`VERIFICATION.md` and `ADMISSION.md`.
 
 ## Refuted, so it is not re-derived
 
@@ -61,7 +81,7 @@ auditors' summaries were not taken at face value.
 ## Not checked, and why
 
 - **Alladi, TAMS 272 (1982)** — AMS returned 403, no abstract retrievable. The one clause resting on it has been removed rather than left unsupported.
-- **Hilberdink's singular-value work** — uncited. Recorded as a coverage gap, not a defect: none of this paper's results are duplicated there (he treats dense multiplicative Toeplitz matrices, obtaining `σ_r ∼ μ_r√(F(n))`, not a smallest-singular-value asymptotic for the sparse forest factor). Adding it is discretionary and presentational.
+- **Hilberdink's singular-value work — RESOLVED 2026-08-03.** The accepted manuscript was checked directly. Its dense divisibility factor has a smallest-singular-value asymptotic with exponent `-1/2`; the paper and README now credit and distinguish that result from the sparse forest factor and modified matrix studied here.
 - **`thm:alladi` and `thm:588` proofs** — taken on faith from their sources; both corroborated numerically.
 - **"α=3 subfamily overtakes α=2 near `n=10¹²`"** — UNVERIFIABLE. No script computes the crossover, and it is beyond feasible computation. Stated as a model prediction, not a measurement.
 - **`hildtenen` range claim** — VERIFIED on bibliographic grounds only, not document-verified; the auditor downgraded its own earlier claim here rather than let it stand.

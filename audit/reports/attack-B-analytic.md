@@ -128,7 +128,7 @@ So `F_y(1+z) ≈ z·(log y)·ρ̂(z log y)`. Substituting `z = ζ/log y` (so `x^
 ```
 M(x,y) ≈ x·(1/2πi)∫ z (log y) ρ̂(z log y) x^z dz = (x/log y)·(1/2πi)∫ ζ ρ̂(ζ) e^{ζu} dζ.
 ```
-Since `L[ρ′](ζ) = ζρ̂(ζ) − ρ(0) = ζρ̂(ζ) − 1` and `(1/2πi)∫e^{ζu}dζ = 0` for `u > 0`, inversion gives
+Since `L(ρ′)(ζ) = ζρ̂(ζ) − ρ(0) = ζρ̂(ζ) − 1` and `(1/2πi)∫e^{ζu}dζ = 0` for `u > 0`, inversion gives
 
 ```
 M(x, y) ≈ (x/log y)·ρ′(u).                                                    ∎(formal)

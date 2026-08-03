@@ -7,7 +7,7 @@ R_n (first row all-ones) built from scratch in
 against repo scripts `wnorm.py`, `massprofile.py`, `checkA.py`, `checkB.py`,
 `convA.py`, `alphaA.py`, `kdrift.py`.
 
-Python: `~/.venvs/claude/bin/python` throughout (numpy 2.0.2, scipy 1.13.1,
+Python: an auditor-local Python environment throughout (numpy 2.0.2, scipy 1.13.1,
 mpmath 1.3.0). Repo is read-only; no git commands run.
 
 ## Matrix construction sanity check
@@ -192,7 +192,7 @@ lambda_max(R) which I did compute above); not in scope of "numbers this
 paper's code should reproduce".
 
 ## Runtime and scale reached
-All computation on `~/.venvs/claude/bin/python` (numpy 2.0.2). Dense
+All computation used the same auditor-local Python environment (numpy 2.0.2). Dense
 (independent, from-scratch) construction + direct linear algebra (SVD/eig/
 inverse) used for n up to 6400 (sigma_max/lambda_max grid) and up to 3200
 (SM-ratio scan, sigma_min(A)/nilpotency up to 3000). Largest single dense

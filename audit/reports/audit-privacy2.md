@@ -1,6 +1,6 @@
 # Privacy/Security Re-Audit — sparse-mertens-singular-values (pass 2)
 
-Repo: ~/Documents/sparse-mertens-singular-values
+Repo: the checked repository working tree
 Base commit: e75d1c4459e9e96fec47ba4d62ebbe703138d268 (pushed to private remote origin/main)
 New material audited: uncommitted `paper/` dir, modified README.md, modified proofs/smallest-singular-value.md
 
@@ -183,5 +183,4 @@ MUST-FIX BEFORE PUSH: NONE
 TOPICAL CONTAMINATION: 0 (NONE)
 PRIVACY VERDICT: CLEAR-TO-PUSH
 ```
-
 

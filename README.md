@@ -1,207 +1,244 @@
 # The smallest singular value of a sparse Mertens matrix
 
-Redheffer's `(0,1)` matrix `R_n` has `det R_n = M(n) = sum_{k<=n} mu(k)`, and a
-much sparser `(0,1)` matrix with the same determinant — roughly `2.61n` nonzeros
-against Redheffer's `~n log n` — was given in
+**Status: release candidate 0.1.0.** This manuscript and its verification code
+are being prepared under the project's
+[public research standard](https://jeff-kline.github.io/posts/research-program/index.html).
+No stable archive or DOI exists yet. Admission under that standard will be a
+project release decision, not peer review or a correctness certificate.
 
-> J. Kline, *A sparser matrix representation of the Mertens function*, Linear
-> Algebra Appl. **581** (2019) 354-366,
+Redheffer's matrix is a `(0,1)` matrix whose determinant is the Mertens function
 
-and its two dominant **eigenvalues**, `1 +/- sqrt(pi(n))`, were determined in
-
-> J. Kline, *On the eigenstructure of sparse matrices related to the prime
-> number theorem*, Linear Algebra Appl. **584** (2020) 409-430.
-
-This repository determines the **singular values**, at both ends, and shows the
-smallest one is governed by Dickman's function:
-
-    |M(n)| n^{-3/2+o(1)}  <=  sigma_min(R_n)  <=  |M(n)| n^{-4/3+o(1)}
-
-    RH  <=>  sigma_min(R_n) << n^{-1+eps}
-
-The equivalence is two-sided and unconditional, but it does not follow from the
-bracket alone — the two statements are established separately:
-
-- `<=` is the lower bound rearranged: `|M(n)| <= sigma_min * n^{3/2+o(1)}`.
-- `=>` does **not** go through the displayed upper bound, which under RH yields
-  only `n^{-5/6+eps}`. It goes through the collapsed equality
-  `sigma_min(R_n) = |M(n)| n^{-3/2+o(1)}`, valid as soon as `|M(n)|/||w|| -> 0`;
-  RH supplies exactly that, since `|M(n)|/||w|| << n^{-1/2+eps}`.
-
-That hypothesis is *not* known unconditionally, because the best available bounds
-on `||w||` and on `|M(n)|` do not cross — which is why the unconditional
-statement is a bracket rather than an asymptotic.
-
-The analytic engine is **not new**: it is Alladi's 1982 asymptotic for the
-Moebius function summed over integers free of small prime factors. What is
-established here is the linear algebra — that the entries of a certain
-inverse-matrix vector *are* Alladi's sums, and what that forces about the
-spectrum.
-
-## Independent scorecard
-
-An independent repo-rank pass (2026-07-26, commit `ea277de`) scored four axes
-qualitatively; full reasoning, external-literature checks, and each axis's own
-counter-argument are in
-[`audit/reports/repo-rank-scorecard.md`](audit/reports/repo-rank-scorecard.md).
-
-| Axis | Note |
-| --- | --- |
-| Novelty | Analytic engine (Alladi 1982) is not new; the bridge from it to this matrix family's singular values, and the negative answer to Cheon-Kim's open question, was not located elsewhere — though the repo's own prior-art audit reads the same connection as low-weight bookkeeping. |
-| Depth | Central claims proved and independently re-derived; the proof note lags one already-repaired proof (Prop. 4) and a conditional-hypothesis flag that the paper and README already carry. |
-| Reach | Settles its own equivalence unconditionally and answers a real open question, but portability to sibling RH-linear-algebra criteria (Cheon-Kim, Bordelles-Cloitre) is untried and unclaimed. |
-| Evidence | Most numerical claims reproduce exactly from shipped code, with a genuinely disciplined refuted-conjecture record; the `n=10^7` support for `‖A^{-1}‖/sqrt(n) ~ 0.8499` is not reproducible from anything currently in `code/`. |
-
-## Main results
-
-- The bracket above, and the two-sided unconditional RH equivalence.
-- `||w|| = n^{1+o(1)}` unconditionally, where `w = A^{-T}(1 - e_1)`. This is what
-  produces the exponent `-3/2`, and it is the analytic content of the main
-  theorem.
-- A closed form identifying `w_j` with Alladi's `M(n/j, P(j))`, verified against
-  a dense linear solve to residual exactly zero.
-- `sigma_min(A) = n^{-1/2+o(1)}` for the unmodified triangular factor `A`. This
-  answers, negatively for this family, a question posed by Cheon and Kim
-  (LAA **572** (2019) 252-272): their sufficient condition for RH needs the
-  quantity `1 + sqrt(n-1)/sigma_min(L_n)` to be `O(n^{1/2+eps})`, and here it is
-  `n^{1+o(1)}`.
-- `||A^{-1}|| = n^{1/2+o(1)}`, via a **terminating** Neumann series: the nilpotent
-  part has index `~ log n / log log n`, the largest number of prime factors of a
-  squarefree integer below `n`. Numerically `||A^{-1}||/sqrt(n)` is flat at
-  `0.8499` out to `n = 10^7`, so `~ sqrt(n)` is expected, but the method provably
-  cannot prove it — see `audit/ledger.md`, item 7.
-- `sigma_max(R_n) = sqrt(n)(1 + O(1/n))`, forced by a single dense row, with
-  non-normality gap `sigma_max/|lambda_max| ~ sqrt(log n)`.
-
-## Relation to earlier work
-
-This completes a programme begun in J. Kline, *Bordered Hermitian matrices and
-sums of the Moebius function*, LAA **588** (2020) 224-237, which observes that
-"the Riemann hypothesis is an assertion that the constant `1^t` is, for all `n`,
-almost in the span of the rows of `B`". That distance is `|M(n)|/||mu||`. The
-matrix is in fact `n^{1+o(1)}` **closer** to singular than that one direction
-reveals, and the discrepancy is exactly Alladi's function summed along a
-hyperbola.
-
-## How to use this repository
-
-This repository was written with substantial assistance from large language
-models and is designed, in part, for other language models to ingest. The
-intended workflow is:
-
-1. Give an AI agent access to the repository.
-2. Ask it to trace definitions, proofs, computations, and dependencies across the
-   paper, the proof note, the code, and the audit records.
-3. Interrogate its answers as a human reader — request derivations, file
-   references, counterexamples, assumptions, and supporting evidence.
-
-The proof note occupies a space between prose and source code: structured
-precisely enough for an agent to navigate, while remaining readable by humans. It
-is not an automatic guarantee of correctness. `audit/ledger.md` records, per
-claim, what was checked and how — including what is *conditional*, what is
-merely numerical, and what was refuted.
-
-### Quick start
-
-Point your agent here and try:
-
-- Which results are proved unconditionally, which are conditional, and on what?
-- Where exactly does the chain from `sigma_min` to RH become conditional, and why
-  do the two bounds fail to cross?
-- What is the dependency chain for the main theorem?
-- Which scripts test a given claim, and what do those tests actually establish?
-- Which conjectures were refuted along the way, and by what evidence?
-
-For important conclusions, ask for exact files, theorem labels, and line numbers —
-and verify against the source.
-
-## Reproduce
-
-NumPy only, except `checkB.py` which also needs `mpmath`. Use a virtual
-environment:
-
-```sh
-python3 -m venv .venv && .venv/bin/pip install numpy mpmath
-cd code
-
-.venv/bin/python checkA.py verify        # closed form vs dense solve, residual 0
-.venv/bin/python wnorm.py 100000 1000000 # ||w|| table, O(n log n), reaches 3*10^7
-.venv/bin/python spectra.py smax         # sigma_max, |lambda_max|, non-normality
-.venv/bin/python spectra.py smin         # sigma_min(A), ||A^{-1}||, nilpotency
-.venv/bin/python spectra.py munorm       # ||mu_n||/sqrt(n) vs sqrt(6/pi^2)
-.venv/bin/python spectra.py smscan 200 3200 25   # Sherman-Morrison ratio, min/max
-.venv/bin/python spectra.py redheffer    # Redheffer's own gap, for comparison
+```text
+M(n) = sum_{k <= n} mu(k).
 ```
 
-`spectra.py` builds the matrices explicitly and calls a dense SVD, checking
-`det = M(n)` as it goes; it is the slow reference against which the `O(n log n)`
-evaluators are validated.
+This repository studies a much sparser matrix `R_n` with the same determinant:
+it has about `2.61n` nonzero entries, compared with roughly `n log n` for
+Redheffer's matrix. The paper determines its largest singular value and gives
+two-sided control of its smallest singular value:
 
-## Layout
+```text
+|M(n)| n^(-3/2+o(1)) <= sigma_min(R_n) <= |M(n)| n^(-4/3+o(1)),
 
-| Path | Contents |
-| --- | --- |
-| `paper/` | The paper (12 pp.), source and PDF. |
-| `proofs/smallest-singular-value.md` | The proof note: statements, proofs, status labels, and what is not established. |
-| `code/` | Numerics. `wnorm.py` and `massprofile.py` are `O(n log n)`; `spectra.py` is the dense reference for every spectral quantity. |
-| `audit/ledger.md` | Per-claim audit record: what was checked, the evidence, and the resolution. Start here. |
-| `audit/reports/` | The five audit-axis reports, plus two independent attack reports (run under mandated-different methods) and the prior-art audit. |
+RH  <=>  sigma_min(R_n) <<_eps n^(-1+eps).
+```
 
-## Status
+Both statements are unconditional. The two directions of the RH equivalence
+use different parts of the bracket argument; the forward direction uses the
+stronger rank-one asymptotic available under RH.
 
-The paper has been through a five-axis adversarial audit (mathematics,
-citations, numerics, abstract, privacy), run as cold agents on disjoint axes.
-Twelve must-fix items were found and applied; the per-claim record is in
-[`audit/ledger.md`](audit/ledger.md). Notably, two printed quantities turned out
-never to have been computed by any script, and one comparative claim was
-inverted — both are documented there rather than quietly removed.
+The matrix is singular whenever `M(n) = 0`, so the displayed bracket may vanish
+at infinitely many indices. The result concerns the scale of the smallest
+singular value relative to `|M(n)|`, not a positive unconditional lower bound.
 
-Open:
+## Main result and mechanism
 
-- **The sharp constant.** Alladi's Theorem 1 does not reach the relevant saddle,
-  and his Theorem 2 gives only half the true exponent; he flags this himself.
-- **The unconditional collapse of the bracket**, i.e. `|M(n)|/||w|| -> 0`.
-- Still unread: Alladi, Trans. Amer. Math. Soc. **272** (1982) 87-105, the sequel
-  to the paper supplying the engine. AMS returned 403.
+Write the sparse matrix as
 
-## How to cite
+```text
+R_n = A_n + e_1 (1 - e_1)^T,
+```
 
-This is an unpublished manuscript; cite the repository and PDF directly.
+where `A_n` is unit lower triangular, and set
+
+```text
+w = A_n^(-T) (1 - e_1).
+```
+
+The paper proves the exact coordinate formula
+
+```text
+w_j = M(n/j, P(j))
+```
+
+for squarefree `j`, with the stated convention at `j = 1`; here `P(j)` is the
+largest prime factor and `M(x,y)` is the Moebius function summed over integers
+whose prime factors all exceed `y`. Nonsquarefree coordinates equal `1`.
+
+K. Alladi determined the asymptotic behavior of these rough-Moebius sums in
+1982. Applying that prior result along the hyperbola `x = n/j`, `y = P(j)` gives
+
+```text
+||w|| = n^(1+o(1))
+```
+
+unconditionally. This is the analytic input behind the exponent `-3/2`.
+Sherman--Morrison then gives
+
+```text
+R_n^(-1) = A_n^(-1) - mu_n w^T / M(n).
+```
+
+When the rank-one term dominates, equivalently when
+
+```text
+|M(n)| ||A_n^(-1)|| / (||mu_n|| ||w||) -> 0,
+```
+
+the smallest singular value satisfies
+
+```text
+sigma_min(R_n) = |M(n)| n^(-3/2+o(1)).
+```
+
+RH implies this dominance condition. The weaker condition
+`|M(n)|/||w|| -> 0` alone is not asserted here.
+
+At the other end, the paper proves
+
+```text
+sigma_max(R_n) = sqrt(n) (1 + O(1/n))
+```
+
+and a non-normality gap of order `sqrt(log n)`. For the unmodified triangular
+factor it proves
+
+```text
+||A_n^(-1)|| = n^(1/2+o(1)),
+sigma_min(A_n) = n^(-1/2+o(1)).
+```
+
+## What is new, and what is not
+
+The analytic estimate for `M(x,y)` is not new; it is Alladi's 1982 theorem.
+The determinant identity and the sparse matrix family come from Jeffery
+Kline's earlier papers. The earliest use of a smallest singular value to
+approach PNT or RH located in the bounded search is due to Bordelles and
+Cloitre; Cheon and Kim later gave a one-directional sufficient condition for
+triangular factors of Mertens equimodular matrices. Hilberdink proved an
+`n^(-1/2)` smallest-singular-value asymptotic for the dense divisibility
+triangular factor underlying Redheffer's matrix. That result matches the
+exponent found here for `A_n`, but it does not treat this sparse forest factor
+or the modified matrix `R_n`.
+
+The contribution claimed here is narrower:
+
+1. the inverse-vector identity connecting this sparse matrix to Alladi's
+   rough-Moebius sums;
+2. the unconditional estimate `||w|| = n^(1+o(1))` obtained from that
+   connection;
+3. the resulting two-sided bracket and two-sided RH equivalence for the
+   modified sparse matrix;
+4. the asymptotics at the largest singular value and for the unmodified
+   triangular factor.
+
+A bounded prior-art search found no earlier treatment of the smallest singular
+value of this sparse family or this two-sided equivalence. That search is
+recorded in [`audit/reports/prior-art-audit.md`](audit/reports/prior-art-audit.md).
+It does not establish global novelty. In particular, one 1982 companion paper
+by Alladi could not be obtained during the earlier audit and remains a named
+coverage gap.
+
+## Evidence and limits
+
+The repository separates four kinds of support:
+
+- **Proof.** The authoritative argument is
+  [`paper/sparse-mertens-singular-values.tex`](paper/sparse-mertens-singular-values.tex),
+  with a compiled reading copy in
+  [`paper/sparse-mertens-singular-values.pdf`](paper/sparse-mertens-singular-values.pdf).
+- **Exact computation.** The scripts construct the matrices, compare the closed
+  form for `w` with a dense solve, check determinants, and reproduce the printed
+  spectral values.
+- **Literature.** Alladi's rough-Moebius estimate and the earlier matrix results
+  are cited rather than presented as new.
+- **Exploration.** Finite computations motivate a sharper conjectural shape for
+  `||w||`, but that refinement is not proved and is not used in the main theorem.
+
+Important limits remain:
+
+- The sharper conjecture
+  `||w|| = n exp(-(1+o(1)) sqrt(log n log log n))` is open.
+- The data are severely pre-asymptotic; several plausible finite-range laws
+  failed and are retained in the audit history.
+- Some original sources were inaccessible during the bounded literature search.
+- AI-assisted audits can expose errors, but they are not peer review or
+  independent expert validation.
+
+## Reproduce the main checks
+
+Requirements are Python 3, NumPy, and mpmath. From the repository root:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+
+.venv/bin/python code/checkA.py verify
+.venv/bin/python code/wnorm.py 100000 1000000
+.venv/bin/python code/spectra.py smax
+.venv/bin/python code/spectra.py smin
+.venv/bin/python code/spectra.py munorm
+.venv/bin/python code/spectra.py sm 500 1000 2000
+.venv/bin/python code/spectra.py redheffer
+```
+
+The first command compares the closed form for `w` with a dense linear solve
+and reports zero residual. `wnorm.py` is an `O(n log n)` evaluator.
+`spectra.py` builds dense matrices, checks `det R_n = M(n)`, and uses direct
+singular-value and eigenvalue computations as a slower reference.
+
+The extended grid behind the printed Sherman--Morrison range is substantially
+slower:
+
+```bash
+.venv/bin/python code/spectra.py smscan 200 3200 25
+```
+
+To rebuild the paper with a local TeX installation:
+
+```bash
+cd paper
+env SOURCE_DATE_EPOCH=1785715200 FORCE_SOURCE_DATE=1 \
+  pdflatex -interaction=nonstopmode -halt-on-error sparse-mertens-singular-values.tex
+env SOURCE_DATE_EPOCH=1785715200 FORCE_SOURCE_DATE=1 \
+  pdflatex -interaction=nonstopmode -halt-on-error sparse-mertens-singular-values.tex
+```
+
+Exact tool versions, expected outputs, and the deterministic PDF hash are in
+[`VERIFICATION.md`](VERIFICATION.md). Tracked-file hashes will be frozen in
+`MANIFEST.sha256` before tagging.
+
+## Repository map
+
+- `paper/` — authoritative paper source and compiled PDF.
+- `proofs/smallest-singular-value.md` — detailed proof and exploration note.
+- `code/` — exact and numerical checks.
+- `audit/ledger.md` — historical finding and disposition record.
+- `audit/reports/` — mathematical, citation, numerical, privacy, and prior-art
+  audits. Process-separated AI reports are evidence about the checking process,
+  not expert review.
+- `ADMISSION.md` — live P1/A1/R1 release gate, added during release preparation.
+- `VERIFICATION.md` and `MANIFEST.sha256` — pinned rerun record and tracked-file
+  hashes.
+- `CITATION.cff` and `CORRECTIONS.md` — citation and stewardship metadata, added
+  before release.
+
+## AI assistance and responsibility
+
+Large language models substantially assisted with mathematical exploration,
+proof drafting, code, literature search, exposition, and adversarial checks.
+Their agreement is evidence about a process, not a certificate of correctness.
+Jeffery Kline directs the work, is responsible for the claims released under
+his name, and will record material corrections or withdrawals in the public
+history.
+
+## Citation
+
+Version 0.1.0 is still a release candidate and has no active DOI. Until an
+immutable archive is published, cite the repository and paper directly:
 
 ```bibtex
 @misc{kline2026sparsemertens,
   author       = {Kline, Jeffery},
   title        = {The smallest singular value of a sparse Mertens matrix},
   year         = {2026},
-  note         = {Unpublished manuscript},
+  version      = {0.1.0-rc},
+  note         = {Release candidate; no permanent archive yet},
   howpublished = {\url{https://github.com/jeff-kline/sparse-mertens-singular-values}}
-}
-```
-
-The matrix studied here originates in:
-
-```bibtex
-@article{kline2019sparser,
-  author  = {Kline, Jeffery},
-  title   = {A sparser matrix representation of the {M}ertens function},
-  journal = {Linear Algebra and its Applications},
-  volume  = {581},
-  pages   = {354--366},
-  year    = {2019}
-}
-
-@article{kline2020eigenstructure,
-  author  = {Kline, Jeffery},
-  title   = {On the eigenstructure of sparse matrices related to the prime
-             number theorem},
-  journal = {Linear Algebra and its Applications},
-  volume  = {584},
-  pages   = {409--430},
-  year    = {2020}
 }
 ```
 
 ## License
 
-Copyright (C) 2026 Jeffery Kline. Released under the GNU General Public
-License, version 3 (GPL-3.0); see `LICENSE`.
+Copyright (C) 2026 Jeffery Kline. Released under the GNU General Public License,
+version 3 only (GPL-3.0-only); see [`LICENSE`](LICENSE).
